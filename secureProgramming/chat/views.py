@@ -1,7 +1,15 @@
-from django.shortcuts import render
+
 
 # Create your views here.
 from django.http import HttpResponse
 
-def homepage(request):
-    return HttpResponse("Hello world! You are on the homepage")
+from django.shortcuts import render, redirect
+from django.template import loader
+
+
+def chatPage(request, *args, **kwargs):
+    if not request.user.is_authenticated:
+        return redirect("login-user")
+    context = {}
+    
+    return render(request, 'chatPage.html', context)
