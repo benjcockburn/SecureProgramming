@@ -5,6 +5,7 @@
 #include <QLineEdit>
 #include <QTextTable>
 #include <QMessageBox>
+#include <iostream>
 
 ChatDialog::ChatDialog(QWidget *parent)
     : QDialog(parent)
@@ -15,6 +16,7 @@ ChatDialog::ChatDialog(QWidget *parent)
     textEdit->setFocusPolicy(Qt::NoFocus);
     textEdit->setReadOnly(true);
     listWidget->setFocusPolicy(Qt::NoFocus);
+    this->chat_tab->setEnabled(false);
 
     connect(lineEdit, &QLineEdit::returnPressed,
             this, &ChatDialog::returnPressed);
@@ -96,10 +98,25 @@ void ChatDialog::participantLeft(const QString &nick)
 
 void ChatDialog::showInformation()
 {
-    if (listWidget->count() == 1) {
-        QMessageBox::information(this, tr("Chat"),
-                                 tr("Launch several instances of this "
-                                    "program on your local network and "
-                                    "start chatting!"));
-    }
+    // if (listWidget->count() == 1) {
+    //     QMessageBox::information(this, tr("Chat"),
+    //                              tr("Launch several instances of this "
+    //                                 "program on your local network and "
+    //                                 "start chatting!"));
+    // }
 }
+void ChatDialog::on_input_register_clicked()
+{
+    this->input_register->setText("hellloooo");
+
+
+}
+
+
+void ChatDialog::on_input_login_clicked()
+{
+    // if password correct then allow chat:
+    this->chat_tab->setEnabled(true);
+    this->tabWidget->setCurrentIndex(1);
+}
+

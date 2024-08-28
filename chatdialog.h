@@ -20,6 +20,10 @@ private slots:
     void participantLeft(const QString &nick);
     void showInformation();
 
+    void on_input_register_clicked();
+
+    void on_input_login_clicked();
+
 private:
     Client client;
     QString myNickName;
