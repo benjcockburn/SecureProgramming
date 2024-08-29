@@ -30,7 +30,7 @@ ChatDialog::ChatDialog(QWidget *parent)
     myNickName = client.nickName();
     newParticipant(myNickName);
     tableFormat.setBorder(0);
-    QTimer::singleShot(10 * 1000, this, &ChatDialog::showInformation);
+    // QTimer::singleShot(10 * 1000, this, &ChatDialog::showInformation); used to give an annoying pop up to say launch two devices
 }
 
 void ChatDialog::appendMessage(const QString &from, const QString &message)
