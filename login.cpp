@@ -92,20 +92,3 @@ bool login::check_Password(const std::string& user, const std::string& pWord) {
     return (storedPasswordHash == inputPasswordHash);
 }
 
-int main() {
-    login loginObj;
-    std::string username, password;
-
-    std::cout << "Enter username: ";
-    std::cin >> username;
-    std::cout << "Enter password: ";
-    std::cin >> password;
-
-    if (loginObj.check_Password(username, password)) {
-        std::cout << "Login successful." << std::endl;
-    } else {
-        std::cout << "Login failed." << std::endl;
-    }
-
-    return 0;
-}
