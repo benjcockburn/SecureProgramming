@@ -5,6 +5,8 @@
 #include "json.hpp"
 #include "parseJsonFile.cpp"
 
+// can be compliled with "g++ -o test_checkValidJSON test_checkValidJSON.cpp"
+
 int main() {
   std::string file_name;
   std::cout << "Enter the name of the JSON file to test: ";
