@@ -1,0 +1,18 @@
+{
+    "type": "signed_data",
+    "data": {
+        "type": "chat",
+        "destination_servers": [
+            "server1.example.com",
+            "server2.example.com"
+        ],
+        "iv": "aW5pdF92ZWN0b3I=",
+        "symm_keys": [
+            "c3ltbWV0cmljX2tleV8x",
+            "c3ltbWV0cmljX2tleV8y"
+        ],
+        "chat": "Y2hhdF9lbmNyeXB0ZWRfbWVzc2FnZQ=="
+    },
+    "counter": 12346,
+    "signature": "dGVzdF9zaWduYXR1cmU="
+}
