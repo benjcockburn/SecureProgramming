@@ -4,6 +4,8 @@
 
 #include "json.hpp"
 
+/* This function is going to have its functionality put into JsonHandler */
+
 const std::regex base64_regex(
     "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$");
 
