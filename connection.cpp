@@ -1,6 +1,7 @@
 #include "connection.h"
 
 #include <QTimerEvent>
+#include <QHostAddress>
 
 static const int TransferTimeout = 30 * 1000;
 static const int PongTimeout = 60 * 1000;
@@ -19,6 +20,7 @@ static const int PingInterval = 5 * 1000;
  *  pong        = { 2 => null }
  *  greeting    = { 3 => { text, bytes } }
  */
+
 
 Connection::Connection(QObject *parent)
     : QTcpSocket(parent), writer(this)
@@ -66,7 +68,6 @@ QByteArray Connection::uniqueId() const
 {
     return peerUniqueId;
 }
-
 bool Connection::sendMessage(const QString &message)
 {
     if (message.isEmpty())
@@ -243,4 +244,25 @@ void Connection::processData()
 
     currentDataType = Undefined;
     buffer.clear();
+}
+
+bool Connection::connectToHost(const QString &address, quint16 port)
+{
+    QHostAddress hostAddress(address);
+
+    if (hostAddress.isNull()) {
+        qWarning("Invalid IP address provided.");
+        return false;
+    }
+
+    // Initiate connection to the specified IP address and port
+    this->QTcpSocket::connectToHost(hostAddress, port);
+
+    // Wait for the connection to be established (optional)
+    if (!waitForConnected(5000)) {  // 5 seconds timeout
+        qWarning("Connection to %s on port %d failed.", qPrintable(address), port);
+        return false;
+    }
+
+    return true;
 }

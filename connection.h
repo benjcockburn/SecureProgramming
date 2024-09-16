@@ -38,6 +38,9 @@ public:
 
     QByteArray uniqueId() const;
 
+
+    bool connectToHost(const QString &address, quint16 port);
+
 signals:
     void readyForUse();
     void newMessage(const QString &from, const QString &message);

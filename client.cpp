@@ -28,6 +28,31 @@ void Client::sendMessage(const QString &message)
         connection->sendMessage(message);
 }
 
+
+void Client::sendMessageDirectly(const QString &message, const QString &address, quint16 port)
+{
+    if (message.isEmpty())
+        return;
+
+    // Create a new connection
+    Connection *connection = new Connection();
+
+    // Connect to the specified host and port
+    if (!connection->connectToHost(address, port)) {
+        qWarning() << "Failed to connect to host: " << address << "on port:" << port;
+        delete connection;
+        return;
+    }
+
+    // Send the message to the connected host
+    connection->sendMessage(message);
+
+    // Clean up the connection (optional: depending on your usage, you might want to delete it)
+    delete connection;
+}
+
+
+
 QString Client::nickName() const
 {
     return peerManager->userName() + '@' + QHostInfo::localHostName()

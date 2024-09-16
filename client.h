@@ -17,6 +17,7 @@ public:
     Client();
 
     void sendMessage(const QString &message);
+    void sendMessageDirectly(const QString &message, const QString &address, quint16 port);
     QString nickName() const;
     bool hasConnection(const QByteArray &peerUniqueId) const;
 

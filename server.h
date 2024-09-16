@@ -17,6 +17,7 @@ signals:
 
 protected:
     void incomingConnection(qintptr socketDescriptor) override;
+
 };
 
 #endif

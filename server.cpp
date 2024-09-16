@@ -4,7 +4,8 @@
 Server::Server(QObject *parent)
     : QTcpServer(parent)
 {
-    listen(QHostAddress::Any);
+    // Listen on all interfaces (QHostAddress::Any) and bind to port 8001
+    listen(QHostAddress::Any, 8001);
 }
 
 void Server::incomingConnection(qintptr socketDescriptor)

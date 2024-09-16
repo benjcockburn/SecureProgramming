@@ -128,7 +128,8 @@ void PeerManager::readBroadcastDatagram()
         if (!client->hasConnection(peerUniqueId)) {
             Connection *connection = new Connection(this);
             emit newConnection(connection);
-            connection->connectToHost(senderIp, senderServerPort);
+            // Convert senderIp to string using toString() before passing it
+            connection->connectToHost(senderIp.toString(), senderServerPort);
         }
     }
 }
