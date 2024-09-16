@@ -3,8 +3,10 @@
 #include <vector>
 
 #include "JsonHandler.h"
-// #include "checkValidJSON.cpp"
 #include "json.hpp"
+
+// can be compiled with "g++ -o test_construction test_construction.cpp
+// JsonHandler.cpp -lssl -lcrypto"
 
 int main() {
   JsonHandler handler;
