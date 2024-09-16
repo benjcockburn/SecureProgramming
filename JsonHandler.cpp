@@ -1,15 +1,13 @@
 #include "JsonHandler.h"
 
-// placeholder functions
-std::string base64_encode(const std::string& input) { return input; }
-
-std::string sign_data(const std::string& data) { return data; }
+#include "ecodeBase_64.cpp"
 
 // JSON Construction
 nlohmann::json JsonHandler::constructSignedData(nlohmann::json data) {
   int currentCounter = ++counter;
   std::string dataStr = data.dump();
-  std::string signature = sign_data(dataStr + std::to_string(currentCounter));
+  std::string signature =
+      base64Encode((dataStr + std::to_string(currentCounter)));
 
   return nlohmann::json{{"type", "signed_data"},
                         {"data", data},
@@ -27,11 +25,17 @@ nlohmann::json JsonHandler::constructChat(
     const std::vector<std::string>& destinationServers,
     const std::vector<std::string>& encryptedKeys, const std::string& iv,
     const std::string& encryptedChatMessage) {
+  std::vector<std::string> base64encodedKeys;
+
+  for (const auto& key : encryptedKeys) {
+    base64encodedKeys.push_back(base64Encode(key));
+  }
+
   nlohmann::json chatData = {{"type", "chat"},
                              {"destination_servers", destinationServers},
-                             {"iv", iv},
-                             {"symm_keys", encryptedKeys},
-                             {"chat", encryptedChatMessage}};
+                             {"iv", base64Encode(iv)},
+                             {"symm_keys", base64encodedKeys},
+                             {"chat", base64Encode(encryptedChatMessage)}};
 
   return constructSignedData(chatData);
 }
@@ -39,7 +43,7 @@ nlohmann::json JsonHandler::constructChat(
 nlohmann::json JsonHandler::constructPublicChat(
     const std::string& senderFingerprint, const std::string& message) {
   nlohmann::json publicChatData = {{"type", "public_chat"},
-                                   {"sender", senderFingerprint},
+                                   {"sender", base64Encode(senderFingerprint)},
                                    {"message", message}};
 
   return constructSignedData(publicChatData);
