@@ -1,0 +1,18 @@
+{
+    "type": "client_list",
+    "servers": [
+        {
+            "address": "server1.example.com",
+            "clients": [
+                "cHVibGljX2tleV9jbGllbnRfMQ==",
+                "cHVibGljX2tleV9jbGllbnRfMg=="
+            ]
+        },
+        {
+            "address": "server2.example.com",
+            "clients": [
+                "cHVibGljX2tleV9jbGllbnRfMw=="
+            ]
+        }
+    ]
+}

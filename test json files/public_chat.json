@@ -1,0 +1,10 @@
+{
+    "type": "signed_data",
+    "data": {
+        "type": "public_chat",
+        "sender": "c2VuZGVyX2ZpbmdlcnByaW50",
+        "message": "Hello, world!"
+    },
+    "counter": 12346,
+    "signature": "dGVzdF9zaWduYXR1cmU="
+}

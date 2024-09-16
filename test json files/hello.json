@@ -1,0 +1,9 @@
+{
+    "type": "signed_data",
+    "data": {
+        "type": "hello",
+        "public_key": "cHVibGljX2tleQ=="
+    },
+    "counter": 12346,
+    "signature": "c2lnbmF0dXJl"
+}

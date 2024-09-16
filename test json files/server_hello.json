@@ -1,0 +1,9 @@
+{
+    "type": "signed_data",
+    "data": {
+        "type": "server_hello",
+        "sender": "192.168.1.1"
+    },
+    "counter": 12346,
+    "signature": "dGVzdF9zaWduYXR1cmU="
+}

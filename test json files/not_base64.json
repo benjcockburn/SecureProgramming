@@ -1,0 +1,18 @@
+{
+    "type": "signed_data",
+    "data": {
+        "type": "chat",
+        "destination_servers": [
+            "server1.example.com",
+            "server2.example.com"
+        ],
+        "iv": "plaintext_initialization_vector",
+        "symm_keys": [
+            "plaintext_aes_key_for_recipient_1",
+            "plaintext_aes_key_for_recipient_2"
+        ],
+        "chat": "plaintext_chat_content"
+    },
+    "counter": 12346,
+    "signature": "plaintext_signature"
+}
