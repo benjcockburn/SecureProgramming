@@ -12,7 +12,12 @@ class JsonHandler {
   int counter = 0;
   nlohmann::json constructSignedData(nlohmann::json data);
 
+  const std::regex base64_regex;
+  bool is_base64(const std::string& str);
+
  public:
+  JsonHandler();
+
   // JSON Construction
   nlohmann::json constructHello(const std::string& publicKey);
   nlohmann::json constructChat(
@@ -29,7 +34,8 @@ class JsonHandler {
   nlohmann::json constructClientUpdateRequest();
   nlohmann::json constructServerHello(const std::string& serverIP);
 
-  // Check if recieved JSON is valid
+  // JSON Validation
+  bool validateMessage(const nlohmann::json& message);
 };
 
 #endif
