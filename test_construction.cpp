@@ -35,7 +35,7 @@ int main() {
 
   // Construct Client List Request
   nlohmann::json clientListRequestJson = handler.constructClientListRequest();
-  std::cout << "Client List Requet JSON: " << clientListRequestJson.dump(4)
+  std::cout << "Client List Request JSON: " << clientListRequestJson.dump(4)
             << std::endl
             << std::endl;
 
