@@ -1,6 +1,7 @@
 #include "JsonHandler.h"
 
 #include "ecodeBase_64.cpp"
+#include "encrypt_AES.cpp"
 
 JsonHandler::JsonHandler()
     : base64_regex(
@@ -25,21 +26,33 @@ nlohmann::json JsonHandler::constructHello(const std::string& publicKey) {
   return constructSignedData(helloData);
 }
 
+// NEED TO WORK OUT IF THIS IS HOW IT SHOULD BE DONE
 nlohmann::json JsonHandler::constructChat(
     const std::vector<std::string>& destinationServers,
-    const std::vector<std::string>& encryptedKeys, const std::string& iv,
-    const std::string& encryptedChatMessage) {
+    const std::vector<unsigned char>& key, const std::vector<unsigned char>& iv,
+    const std::string& chatBlock, std::vector<RSA*> publicKeys) {
+  std::vector<unsigned char> cipherText;
+  aesEncrypt(key, iv, chatBlock, cipherText);
+
+  std::vector<std::vector<unsigned char>> AESKeys;
   std::vector<std::string> base64encodedKeys;
 
-  for (const auto& key : encryptedKeys) {
-    base64encodedKeys.push_back(base64Encode(key));
+  std::string str_iv(iv.begin(), iv.end());
+
+  for (const auto& publicKey : publicKeys) {
+    std::vector<unsigned char> encryptedKey;
+    rsaEncrypt(key, encryptedKey, publicKey)
+        std::string str_encryptedKey(encryptedKey.begin(), encryptedKey.end());
+    base64encodedKeys.push_back(base64Encode(str_encryptedKey));
   }
+
+  std::string str_cipherText(cipherText.begin(), cipherText.end());
 
   nlohmann::json chatData = {{"type", "chat"},
                              {"destination_servers", destinationServers},
-                             {"iv", base64Encode(iv)},
+                             {"iv", base64Encode(str_iv)},
                              {"symm_keys", base64encodedKeys},
-                             {"chat", base64Encode(encryptedChatMessage)}};
+                             {"chat", base64Encode(cipherText)}};
 
   return constructSignedData(chatData);
 }

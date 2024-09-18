@@ -22,8 +22,10 @@ int main() {
     std::cout << "Hello is invalid." << std::endl;
   }
 
-  // Construct Chat
-  std::vector<std::string> destinationServers = {"server1,", "server2"};
+  // Construct Chat (need to make a new test for the new version of the
+  // function)
+
+  /* std::vector<std::string> destinationServers = {"server1,", "server2"};
   std::vector<std::string> encryptedKeys = {"encryptedKey1", "encryptedKey2"};
   std::string iv = "initializationVector";
   std::string encryptedChatMessage = "encryptedMessage";
@@ -34,7 +36,7 @@ int main() {
     std::cout << "Chat is valid." << std::endl;
   } else {
     std::cout << "Chat is invalid." << std::endl;
-  }
+  } */
 
   // Consruct Public Chat
   std::string senderFingerprint = "senderFingerprint";

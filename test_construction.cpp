@@ -16,14 +16,16 @@ int main() {
   nlohmann::json helloJson = handler.constructHello(publicKey);
   std::cout << "Hello JSON: " << helloJson.dump(4) << std::endl << std::endl;
 
-  // Construct Chat
-  std::vector<std::string> destinationServers = {"server1,", "server2"};
+  // Construct Chat (need to make a new test for the new version of the
+  // function)
+
+  /*std::vector<std::string> destinationServers = {"server1,", "server2"};
   std::vector<std::string> encryptedKeys = {"encryptedKey1", "encryptedKey2"};
   std::string iv = "initializationVector";
   std::string encryptedChatMessage = "encryptedMessage";
   nlohmann::json chatJson = handler.constructChat(
       destinationServers, encryptedKeys, iv, encryptedChatMessage);
-  std::cout << "Chat JSON: " << chatJson.dump(4) << std::endl << std::endl;
+  std::cout << "Chat JSON: " << chatJson.dump(4) << std::endl << std::endl;*/
 
   // Consruct Public Chat
   std::string senderFingerprint = "senderFingerprint";
