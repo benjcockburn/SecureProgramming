@@ -25,7 +25,7 @@ class JsonHandler {
   nlohmann::json constructChat(
       const std::vector<std::string>& destinationServers,
       const std::vector<std::string>& participants, const std::string message,
-      std::vector<RSA*> publicKeys);
+      const std::vector<std::string>& publicKeys);
   nlohmann::json constructPublicChat(const std::string& senderFingerprint,
                                      const std::string& message);
   nlohmann::json constructClientListRequest();

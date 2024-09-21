@@ -9,6 +9,7 @@
 #include "ecodeBase_64.cpp"
 #include "encrypt_AES.h"
 #include "generate_Keys.h"
+#include "publicKeyStringConversion.h"
 
 JsonHandler::JsonHandler()
     : base64_regex(
@@ -40,7 +41,7 @@ nlohmann::json JsonHandler::constructHello(const std::string& publicKey) {
 nlohmann::json JsonHandler::constructChat(
     const std::vector<std::string>& destinationServers,
     const std::vector<std::string>& participants, const std::string message,
-    std::vector<RSA*> publicKeys) {
+    const std::vector<std::string>& publicKeys) {
   std::vector<std::string> base64participants;
   for (const auto& participant : participants) {
     base64participants.push_back(base64Encode(participant));
@@ -60,8 +61,9 @@ nlohmann::json JsonHandler::constructChat(
   std::vector<std::string> base64encodedKeys;
 
   for (const auto& publicKey : publicKeys) {
+    RSA* rsa_publicKey = stringToRsaPublicKey(publicKey);
     std::vector<unsigned char> encryptedKey;
-    rsaEncrypt(aesKey, encryptedKey, publicKey);
+    rsaEncrypt(aesKey, encryptedKey, rsa_publicKey);
     std::string str_encryptedKey(encryptedKey.begin(), encryptedKey.end());
     base64encodedKeys.push_back(base64Encode(str_encryptedKey));
   }
