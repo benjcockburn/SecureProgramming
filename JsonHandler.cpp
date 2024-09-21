@@ -1,13 +1,22 @@
 #include "JsonHandler.h"
 
+#include <openssl/err.h>
+#include <openssl/evp.h>
+#include <openssl/pem.h>
+#include <openssl/rand.h>
+#include <openssl/rsa.h>
+
 #include "ecodeBase_64.cpp"
 #include "encrypt_AES.cpp"
+#include "generate_Keys.cpp"
 
 JsonHandler::JsonHandler()
     : base64_regex(
           "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$") {}
 
-// JSON Construction
+/* JSON Construction */
+
+// Construct Signed Data
 nlohmann::json JsonHandler::constructSignedData(nlohmann::json data) {
   int currentCounter = ++counter;
   std::string dataStr = data.dump();
@@ -20,43 +29,53 @@ nlohmann::json JsonHandler::constructSignedData(nlohmann::json data) {
                         {"signature", signature}};
 }
 
+// Construct Hello
 nlohmann::json JsonHandler::constructHello(const std::string& publicKey) {
   nlohmann::json helloData = {{"type", "hello"}, {"public_key", publicKey}};
 
   return constructSignedData(helloData);
 }
 
-// NEED TO WORK OUT IF THIS IS HOW IT SHOULD BE DONE
+// Construct Chat
 nlohmann::json JsonHandler::constructChat(
     const std::vector<std::string>& destinationServers,
-    const std::vector<unsigned char>& key, const std::vector<unsigned char>& iv,
-    const std::string& chatBlock, std::vector<RSA*> publicKeys) {
-  std::vector<unsigned char> cipherText;
-  aesEncrypt(key, iv, chatBlock, cipherText);
+    const std::vector<std::string>& participants, const std::string message,
+    std::vector<unsigned char> aesKey, std::vector<RSA*> publicKeys) {
+  std::vector<std::string> base64participants;
+  for (const auto& participant : participants) {
+    base64participants.push_back(base64Encode(participant));
+  }
+  json chatBlock = {{"participants", base64participants}, {"message", message}};
+  std::string chatDump = chatBlock.dump();
 
-  std::vector<std::vector<unsigned char>> AESKeys;
+  std::vector<unsigned char> iv;
+  generateAESKeyAndIV(nullptr, iv);
+
+  std::vector<unsigned char> chatDump_vecChar(chatDump.begin(), chatDump.end());
+  std::vector<unsigned char> encrypted_chatDump;
+  aesEncrypt(aesKey, iv, chatDump_vecChar, encrypted_chatDump);
+
   std::vector<std::string> base64encodedKeys;
-
-  std::string str_iv(iv.begin(), iv.end());
 
   for (const auto& publicKey : publicKeys) {
     std::vector<unsigned char> encryptedKey;
-    rsaEncrypt(key, encryptedKey, publicKey)
-        std::string str_encryptedKey(encryptedKey.begin(), encryptedKey.end());
+    rsaEncrypt(aesKey, encryptedKey, publicKey);
+    std::string str_encryptedKey(encryptedKey.begin(), encryptedKey.end());
     base64encodedKeys.push_back(base64Encode(str_encryptedKey));
   }
 
-  std::string str_cipherText(cipherText.begin(), cipherText.end());
+  std::string str_iv(iv.begin(), iv.end());
 
   nlohmann::json chatData = {{"type", "chat"},
                              {"destination_servers", destinationServers},
                              {"iv", base64Encode(str_iv)},
                              {"symm_keys", base64encodedKeys},
-                             {"chat", base64Encode(cipherText)}};
+                             {"chat", base64Encode(encrypted_chatDump)}};
 
   return constructSignedData(chatData);
 }
 
+// Construct Public Chat
 nlohmann::json JsonHandler::constructPublicChat(
     const std::string& senderFingerprint, const std::string& message) {
   nlohmann::json publicChatData = {{"type", "public_chat"},
@@ -66,10 +85,12 @@ nlohmann::json JsonHandler::constructPublicChat(
   return constructSignedData(publicChatData);
 }
 
+// Construct Client List Request
 nlohmann::json JsonHandler::constructClientListRequest() {
   return nlohmann::json{{"type", "client_list_request"}};
 }
 
+// Construct Client List
 nlohmann::json JsonHandler::constructClientList(
     const std::vector<std::pair<std::string, std::vector<std::string>>>&
         serverClients) {
@@ -88,15 +109,18 @@ nlohmann::json JsonHandler::constructClientList(
   return clientListResponse;
 }
 
+// Construct Client Update
 nlohmann::json JsonHandler::constructClientUpdate(
     const std::vector<std::string>& clients) {
   return nlohmann::json{{"type", "client_update"}, {"clients", clients}};
 }
 
+// Construct Client Update Request
 nlohmann::json JsonHandler::constructClientUpdateRequest() {
   return nlohmann::json{{"type", "client_update_request"}};
 }
 
+// Construct Server Hello
 nlohmann::json JsonHandler::constructServerHello(const std::string& serverIP) {
   nlohmann::json serverHelloData = {{"type", "server_hello"},
                                     {"sender", serverIP}};
@@ -104,7 +128,7 @@ nlohmann::json JsonHandler::constructServerHello(const std::string& serverIP) {
   return constructSignedData(serverHelloData);
 }
 
-// JSON Validation
+/* JSON Validation */
 bool JsonHandler::is_base64(const std::string& str) {
   return std::regex_match(str, base64_regex);
 }

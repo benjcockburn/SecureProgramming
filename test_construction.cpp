@@ -1,8 +1,15 @@
+#include <openssl/err.h>
+#include <openssl/evp.h>
+#include <openssl/pem.h>
+#include <openssl/rand.h>
+#include <openssl/rsa.h>
+
 #include <iostream>
 #include <string>
 #include <vector>
 
 #include "JsonHandler.h"
+#include "generate_Keys.cpp"
 #include "json.hpp"
 
 // can be compiled with "g++ -o test_construction test_construction.cpp
@@ -16,16 +23,22 @@ int main() {
   nlohmann::json helloJson = handler.constructHello(publicKey);
   std::cout << "Hello JSON: " << helloJson.dump(4) << std::endl << std::endl;
 
-  // Construct Chat (need to make a new test for the new version of the
-  // function)
+  // Construct Chat
+  std::vector<std::string> destinationServers = {"server1", "server2"};
+  std::vector<std::string> participants = {"fingerprint1", "fingerprint2"};
+  std::string privateMessage = "Example Message";
 
-  /*std::vector<std::string> destinationServers = {"server1,", "server2"};
-  std::vector<std::string> encryptedKeys = {"encryptedKey1", "encryptedKey2"};
-  std::string iv = "initializationVector";
-  std::string encryptedChatMessage = "encryptedMessage";
+  std::vector<unsigned char> aesKey;
+  generateAESKeyAndIV(aesKey, nullptr);
+
+  std::vector<RSA*> publicKeys;
+  publicKeys[0] = loadPublicKey("public_key_example_1.pem");
+  publicKeys[1] = loadPublicKey("public_key_example_2.pem");
+
   nlohmann::json chatJson = handler.constructChat(
-      destinationServers, encryptedKeys, iv, encryptedChatMessage);
-  std::cout << "Chat JSON: " << chatJson.dump(4) << std::endl << std::endl;*/
+      destinationServers, participants, privateMessage, aesKey, publicKeys);
+
+  std::cout << "Chat JSON: " << chatJson.dump(4) << std::endl << std::endl;
 
   // Consruct Public Chat
   std::string senderFingerprint = "senderFingerprint";
