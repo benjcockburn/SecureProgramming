@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "JsonHandler.h"
+#include "encrypt_AES.cpp"
 #include "generate_Keys.cpp"
 #include "json.hpp"
 
@@ -28,15 +29,14 @@ int main() {
   std::vector<std::string> participants = {"fingerprint1", "fingerprint2"};
   std::string privateMessage = "Example Message";
 
-  std::vector<unsigned char> aesKey;
-  generateAESKeyAndIV(aesKey, nullptr);
-
   std::vector<RSA*> publicKeys;
-  publicKeys[0] = loadPublicKey("public_key_example_1.pem");
-  publicKeys[1] = loadPublicKey("public_key_example_2.pem");
+  RSA* pubKey1 = loadPublicKey("public_key_example_1.pem");
+  RSA* pubKey2 = loadPublicKey("public_key_example_2.pem");
+  publicKeys.push_back(pubKey1);
+  publicKeys.push_back(pubKey2);
 
   nlohmann::json chatJson = handler.constructChat(
-      destinationServers, participants, privateMessage, aesKey, publicKeys);
+      destinationServers, participants, privateMessage, publicKeys);
 
   std::cout << "Chat JSON: " << chatJson.dump(4) << std::endl << std::endl;
 
