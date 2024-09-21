@@ -1,6 +1,8 @@
 #ifndef JSONHANDLER_H
 #define JSONHANDLER_H
 
+#include <openssl/rsa.h>
+
 #include <iostream>
 #include <regex>
 #include <string>

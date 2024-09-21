@@ -45,15 +45,17 @@ nlohmann::json JsonHandler::constructChat(
   for (const auto& participant : participants) {
     base64participants.push_back(base64Encode(participant));
   }
-  json chatBlock = {{"participants", base64participants}, {"message", message}};
+  nlohmann::json chatBlock = {{"participants", base64participants},
+                              {"message", message}};
   std::string chatDump = chatBlock.dump();
 
-  std::vector<unsigned char> aesKeys, iv;
-  generateAESKeyAndIV(aesKeys, iv);
+  std::vector<unsigned char> aesKey, iv;
+  generateAESKeyAndIV(aesKey, iv);
 
-  std::vector<unsigned char> chatDump_vecChar(chatDump.begin(), chatDump.end());
   std::vector<unsigned char> encrypted_chatDump;
-  aesEncrypt(aesKey, iv, chatDump_vecChar, encrypted_chatDump);
+  aesEncrypt(aesKey, iv, chatDump, encrypted_chatDump);
+  std::string str_encrypted_chatDump(encrypted_chatDump.begin(),
+                                     encrypted_chatDump.end());
 
   std::vector<std::string> base64encodedKeys;
 
@@ -70,7 +72,7 @@ nlohmann::json JsonHandler::constructChat(
                              {"destination_servers", destinationServers},
                              {"iv", base64Encode(str_iv)},
                              {"symm_keys", base64encodedKeys},
-                             {"chat", base64Encode(encrypted_chatDump)}};
+                             {"chat", base64Encode(str_encrypted_chatDump)}};
 
   return constructSignedData(chatData);
 }
