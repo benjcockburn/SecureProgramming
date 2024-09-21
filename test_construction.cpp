@@ -9,12 +9,11 @@
 #include <vector>
 
 #include "JsonHandler.h"
-#include "encrypt_AES.h"
-#include "generate_Keys.h"
 #include "json.hpp"
 
-// can be compiled with "g++ -o test_construction test_construction.cpp
-// JsonHandler.cpp encrypt_AES.cpp generate_Keys.cpp -lssl -lcrypto"
+/* can be compiled with "g++ -o test_construction test_construction.cpp
+JsonHandler.cpp encrypt_AES.cpp generate_Keys.cpp
+publicKeyStringConversion.cpp -lssl -lcrypto" */
 
 int main() {
   JsonHandler handler;
@@ -30,7 +29,6 @@ int main() {
   std::string privateMessage = "Example Message";
 
   std::vector<std::string> publicKeys;
-
   std::string publicKey1 =
       "-----BEGIN PUBLIC KEY-----\n"
       "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs7PPRzrrm2ZknkfTYEA8hD7DKXQD"
@@ -51,7 +49,6 @@ int main() {
       "3hZnKrxeQCBQf1ZqLKoTllO8xfxzn+Pvk/"
       "mqx+vmBzD4mqMWayWtORwb9vNjXMJrd31yWNMd4JmabLtOaA6wK8nu6wIDAQAB\n"
       "-----END PUBLIC KEY-----\n";
-
   publicKeys.push_back(publicKey1);
   publicKeys.push_back(publicKey2);
 
@@ -72,6 +69,33 @@ int main() {
   nlohmann::json clientListRequestJson = handler.constructClientListRequest();
   std::cout << "Client List Request JSON: " << clientListRequestJson.dump(4)
             << std::endl
+            << std::endl;
+
+  // Construct Client List
+  std::vector<std::pair<std::string, std::vector<std::string>>> serverClients;
+
+  std::string server1_address = "server1.example.com";
+  std::vector<std::string> server1_clients = {"example_public_key_1",
+                                              "example_public_key_2"};
+  std::pair<std::string, std::vector<std::string>> server1 = {server1_address,
+                                                              server1_clients};
+  serverClients.push_back(server1);
+
+  std::string server2_address = "server2.example.com";
+  std::vector<std::string> server2_clients = {"example_public_key_1"};
+  std::pair<std::string, std::vector<std::string>> server2 = {server2_address,
+                                                              server2_clients};
+  serverClients.push_back(server2);
+
+  nlohmann::json clientListJson = handler.constructClientList(serverClients);
+  std::cout << "Client List JSON: " << clientListJson.dump(4) << std::endl
+            << std::endl;
+
+  // Construct Client Update
+  std::vector<std::string> clients = {publicKey1, publicKey2};
+
+  nlohmann::json clientUpdateJson = handler.constructClientUpdate(clients);
+  std::cout << "Client Update JSON: " << clientUpdateJson.dump(4) << std::endl
             << std::endl;
 
   // Construct Client Update Request

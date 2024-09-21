@@ -5,8 +5,9 @@
 #include "json.hpp"
 #include "parseJsonFile.cpp"
 
-// can be compiled with "g++ -o test_validation test_validation.cpp
-// JsonHandler.cpp -lssl -lcrypto"
+/* can be compiled with "g++ -o test_validation test_validation.cpp
+JsonHandler.cpp encrypt_AES.cpp generate_Keys.cpp
+publicKeyStringConversion.cpp -lssl -lcrypto" */
 
 int main() {
   JsonHandler handler;

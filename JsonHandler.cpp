@@ -270,13 +270,6 @@ bool JsonHandler::validateMessage(const nlohmann::json& message) {
                   << std::endl;
         return false;
       }
-
-      for (const auto& client : message["clients"]) {
-        if (!is_base64(client)) {
-          std::cerr << "Invalid base64 client." << std::endl;
-          return false;
-        }
-      }
     }
 
     // client_update_request
