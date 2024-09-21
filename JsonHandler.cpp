@@ -7,8 +7,8 @@
 #include <openssl/rsa.h>
 
 #include "ecodeBase_64.cpp"
-#include "encrypt_AES.cpp"
-#include "generate_Keys.cpp"
+#include "encrypt_AES.h"
+#include "generate_Keys.h"
 
 JsonHandler::JsonHandler()
     : base64_regex(

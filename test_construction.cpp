@@ -9,8 +9,8 @@
 #include <vector>
 
 #include "JsonHandler.h"
-#include "encrypt_AES.cpp"
-#include "generate_Keys.cpp"
+#include "encrypt_AES.h"
+#include "generate_Keys.h"
 #include "json.hpp"
 
 // can be compiled with "g++ -o test_construction test_construction.cpp

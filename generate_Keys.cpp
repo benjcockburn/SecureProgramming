@@ -1,10 +1,4 @@
-#include <openssl/rand.h>
-#include <openssl/aes.h>
-#include <string>
-#include <vector>
-#include <iostream>
-#include <iomanip>
-#include <sstream>
+#include "generate_Keys.h"
 
 // Helper function to convert binary to Base64 or hex (for debugging)
 std::string toHex(const unsigned char* data, int len) {
@@ -16,7 +10,9 @@ std::string toHex(const unsigned char* data, int len) {
 }
 
 // Generate an AES key and IV
-bool generateAESKeyAndIV(std::vector<unsigned char>& aesKey, std::vector<unsigned char>& iv, int keySize = 256) {
+bool generateAESKeyAndIV(std::vector<unsigned char>& aesKey, std::vector<unsigned char>& iv) {
+    int keySize = 256;
+
     aesKey.resize(keySize / 8); // AES key size: 32 bytes for 256-bit key
     iv.resize(AES_BLOCK_SIZE);  // IV size: 16 bytes (block size of AES)
 
