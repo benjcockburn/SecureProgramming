@@ -7,7 +7,11 @@
 
 #include <sstream>
 
+// public key conversion
 std::string rsaPublicKeyToString(RSA* publicKey);
 RSA* stringToRsaPublicKey(const std::string& publicKeyString);
+
+// private key conversion
+RSA* stringToRsaPrivateKey(const std::string& privateKeyString);
 
 #endif

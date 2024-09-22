@@ -41,6 +41,9 @@ class JsonHandler {
 
   // Determine Message Type
   std::string findMessageType(const nlohmann::json& message);
+
+  // Decrypt Chat Message
+  nlohmann::json decryptChat(const nlohmann::json& message, const std::string& privateKey);
 };
 
 #endif

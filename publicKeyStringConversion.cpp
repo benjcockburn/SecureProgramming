@@ -1,5 +1,6 @@
 #include "publicKeyStringConversion.h"
 
+/* public key conversion */
 std::string rsaPublicKeyToString(RSA* publicKey) {
   BIO* bio = BIO_new(BIO_s_mem());
   PEM_write_bio_RSA_PUBKEY(bio, publicKey);
@@ -19,4 +20,13 @@ RSA* stringToRsaPublicKey(const std::string& publicKey) {
 
   BIO_free(bio);
   return publicKeyRsa;
+}
+
+/* private key conversion */
+RSA* stringToRsaPrivateKey(const std::string& privateKeyString) {
+  BIO* bio = BIO_new_mem_buf(privateKeyString.c_str(), -1);
+  RSA* privateKeyRsa = PEM_read_bio_RSAPrivateKey(bio, NULL, NULL, NULL);
+
+  BIO_free(bio);
+  return privateKeyRsa;
 }
