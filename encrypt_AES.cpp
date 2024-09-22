@@ -1,11 +1,4 @@
-#include <openssl/evp.h>
-#include <openssl/aes.h>
-#include <openssl/rsa.h>
-#include <openssl/pem.h>
-#include <openssl/err.h>
-#include <cstring>
-#include <iostream>
-#include <vector>
+#include "encrypt_AES.h"
 
 // AES Encrypt function
 bool aesEncrypt(const std::vector<unsigned char>& key, const std::vector<unsigned char>& iv,

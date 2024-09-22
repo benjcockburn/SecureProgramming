@@ -5,8 +5,9 @@
 #include "json.hpp"
 #include "parseJsonFile.cpp"
 
-// can be compiled with "g++ -o test_validation test_validation.cpp
-// JsonHandler.cpp -lssl -lcrypto"
+/* can be compiled with "g++ -o test_validation test_validation.cpp
+JsonHandler.cpp encrypt_AES.cpp generate_Keys.cpp
+publicKeyStringConversion.cpp -lssl -lcrypto" */
 
 int main() {
   JsonHandler handler;
@@ -19,6 +20,8 @@ int main() {
 
   if (handler.validateMessage(message)) {
     std::cout << "Message is valid." << std::endl;
+    std::string message_type = handler.findMessageType(message);
+    std::cout << "Message type is: " << message_type << std::endl;
   } else {
     std::cout << "Message is invalid." << std::endl;
   }

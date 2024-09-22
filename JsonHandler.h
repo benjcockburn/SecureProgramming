@@ -1,6 +1,8 @@
 #ifndef JSONHANDLER_H
 #define JSONHANDLER_H
 
+#include <openssl/rsa.h>
+
 #include <iostream>
 #include <regex>
 #include <string>
@@ -22,8 +24,8 @@ class JsonHandler {
   nlohmann::json constructHello(const std::string& publicKey);
   nlohmann::json constructChat(
       const std::vector<std::string>& destinationServers,
-      const std::vector<std::string>& encryptedKeys, const std::string& iv,
-      const std::string& encryptedChatMessage);
+      const std::vector<std::string>& participants, const std::string message,
+      const std::vector<std::string>& publicKeys);
   nlohmann::json constructPublicChat(const std::string& senderFingerprint,
                                      const std::string& message);
   nlohmann::json constructClientListRequest();
@@ -36,6 +38,12 @@ class JsonHandler {
 
   // JSON Validation
   bool validateMessage(const nlohmann::json& message);
+
+  // Determine Message Type
+  std::string findMessageType(const nlohmann::json& message);
+
+  // Decrypt Chat Message
+  nlohmann::json decryptChat(const nlohmann::json& message, const std::string& privateKey);
 };
 
 #endif
