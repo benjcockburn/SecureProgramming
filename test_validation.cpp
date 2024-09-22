@@ -20,6 +20,8 @@ int main() {
 
   if (handler.validateMessage(message)) {
     std::cout << "Message is valid." << std::endl;
+    std::string message_type = handler.findMessageType(message);
+    std::cout << "Message type is: " << message_type << std::endl;
   } else {
     std::cout << "Message is invalid." << std::endl;
   }

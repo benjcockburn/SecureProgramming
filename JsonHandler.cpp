@@ -288,3 +288,14 @@ bool JsonHandler::validateMessage(const nlohmann::json& message) {
     return false;
   }
 }
+
+/* Determine Message Type */
+std::string JsonHandler::findMessageType(const nlohmann::json& message) {
+  std::string message_type = message["type"];
+
+  if (message_type == "signed_data") {
+    return message["data"]["type"];
+  }
+
+  return message_type;
+}

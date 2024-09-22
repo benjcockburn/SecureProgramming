@@ -38,6 +38,9 @@ class JsonHandler {
 
   // JSON Validation
   bool validateMessage(const nlohmann::json& message);
+
+  // Determine Message Type
+  std::string findMessageType(const nlohmann::json& message);
 };
 
 #endif
