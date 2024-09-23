@@ -17,6 +17,8 @@ class JsonHandler {
   const std::regex base64_regex;
   bool is_base64(const std::string& str);
 
+  bool verifySignature(const nlohmann::json& message);
+
  public:
   JsonHandler();
 
@@ -43,7 +45,8 @@ class JsonHandler {
   std::string findMessageType(const nlohmann::json& message);
 
   // Decrypt Chat Message
-  nlohmann::json decryptChat(const nlohmann::json& message, const std::string& privateKey);
+  nlohmann::json decryptChat(const nlohmann::json& message,
+                             const std::string& privateKey);
 };
 
 #endif
