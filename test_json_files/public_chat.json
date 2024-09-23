@@ -1,10 +1,10 @@
 {
-    "type": "signed_data",
+    "counter": 3,
     "data": {
-        "type": "public_chat",
-        "sender": "c2VuZGVyX2ZpbmdlcnByaW50",
-        "message": "Hello, world!"
+        "message": "Hello, world!",
+        "sender": "c2VuZGVyRmluZ2VycHJpbnQ=",
+        "type": "public_chat"
     },
-    "counter": 12346,
-    "signature": "dGVzdF9zaWduYXR1cmU="
+    "signature": "eyJtZXNzYWdlIjoiSGVsbG8sIHdvcmxkISIsInNlbmRlciI6ImMyVnVaR1Z5Um1sdVoyVnljSEpwYm5RPSIsInR5cGUiOiJwdWJsaWNfY2hhdCJ9Mw==",
+    "type": "signed_data"
 }

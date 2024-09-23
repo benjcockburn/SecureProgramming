@@ -13,21 +13,7 @@ int main() {
   JsonHandler constructor;
   JsonHandler reciever;
 
-  // Construct Hello
-  std::string publicKey = "cHVibGljX2tleQ==";
-  nlohmann::json helloJson = constructor.constructHello(publicKey);
-
-  if (reciever.validateMessage(helloJson)) {
-    std::cout << "Hello is valid." << std::endl;
-  } else {
-    std::cout << "Hello is invalid." << std::endl;
-  }
-
-  // Construct Chat
-  std::vector<std::string> destinationServers = {"server1", "server2"};
-  std::vector<std::string> participants = {"fingerprint1", "fingerprint2"};
-  std::string privateMessage = "Example Message";
-
+  // public keys
   std::vector<std::string> publicKeys;
   std::string publicKey1 =
       "-----BEGIN PUBLIC KEY-----\n"
@@ -51,6 +37,20 @@ int main() {
       "-----END PUBLIC KEY-----\n";
   publicKeys.push_back(publicKey1);
   publicKeys.push_back(publicKey2);
+
+  // Construct Hello
+  nlohmann::json helloJson = constructor.constructHello(publicKey1);
+
+  if (reciever.validateMessage(helloJson)) {
+    std::cout << "Hello is valid." << std::endl;
+  } else {
+    std::cout << "Hello is invalid." << std::endl;
+  }
+
+  // Construct Chat
+  std::vector<std::string> destinationServers = {"server1", "server2"};
+  std::vector<std::string> participants = {"fingerprint1", "fingerprint2"};
+  std::string privateMessage = "Example Message";
 
   nlohmann::json chatJson = constructor.constructChat(
       destinationServers, participants, privateMessage, publicKeys);
@@ -87,14 +87,13 @@ int main() {
   std::vector<std::pair<std::string, std::vector<std::string>>> serverClients;
 
   std::string server1_address = "server1.example.com";
-  std::vector<std::string> server1_clients = {"example_public_key_1",
-                                              "example_public_key_2"};
+  std::vector<std::string> server1_clients = publicKeys;
   std::pair<std::string, std::vector<std::string>> server1 = {server1_address,
                                                               server1_clients};
   serverClients.push_back(server1);
 
   std::string server2_address = "server2.example.com";
-  std::vector<std::string> server2_clients = {"example_public_key_1"};
+  std::vector<std::string> server2_clients = {publicKey1};
   std::pair<std::string, std::vector<std::string>> server2 = {server2_address,
                                                               server2_clients};
   serverClients.push_back(server2);
@@ -109,7 +108,7 @@ int main() {
   }
 
   // Construct Client Update
-  std::vector<std::string> clients = {publicKey1, publicKey2};
+  std::vector<std::string> clients = publicKeys;
 
   nlohmann::json clientUpdateJson = constructor.constructClientUpdate(clients);
 

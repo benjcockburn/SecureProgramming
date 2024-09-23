@@ -1,6 +1,6 @@
 {
     "type": "signed_data",
     "data": {},
-    "counter": 12346,
-    "signature": "dGVzdF9zaWduYXR1cmU="
+    "counter": 1,
+    "signature": "eyJzZW5kZXIiOiIxOTIuMTY4LjEuMSIsInR5cGUiOiJzZXJ2ZXJfaGVsbG8ifTQ="
 }

@@ -4,6 +4,6 @@
         "sender": "192.168.1.1",
         "type": "server_hello"
     },
-    "signature": "eyJzZW5kZXIiOiIxOTIuMTY4LjEuMSIsInR5cGUiOiJzZXJ2ZXJfaGVsbG8ifTQ=",
+    "signature": "aaaaaaaa",
     "type": "signed_data"
 }

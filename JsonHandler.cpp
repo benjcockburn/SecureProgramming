@@ -139,6 +139,24 @@ bool JsonHandler::is_base64(const std::string& str) {
   return std::regex_match(str, base64_regex);
 }
 
+bool JsonHandler::verifySignature(const nlohmann::json& message) {
+  std::string type = message["type"];
+  if (type != "signed_data") {
+    std::cerr << "Wrong message type, expected 'signed_data'" << std::endl;
+    return false;
+  }
+
+  std::string dataStr = message["data"].dump();
+  int message_counter = message["counter"];
+
+  std::string signature = message["signature"];
+
+  std::string recreated_signature =
+      base64Encode((dataStr + std::to_string(message_counter)));
+
+  return recreated_signature == signature;
+}
+
 bool JsonHandler::validateMessage(const nlohmann::json& message) {
   try {
     if (!message.contains("type")) {
@@ -177,6 +195,12 @@ bool JsonHandler::validateMessage(const nlohmann::json& message) {
         return false;
       }
 
+      // verify signature
+      if (!(verifySignature(message))) {
+        std::cerr << "Signature does not match data section." << std::endl;
+        return false;
+      }
+
       std::string data_type = message["data"]["type"];
 
       // hello message
@@ -184,11 +208,6 @@ bool JsonHandler::validateMessage(const nlohmann::json& message) {
         if (!message["data"].contains("public_key")) {
           std::cerr << "Invalid hello message. Missing public_key."
                     << std::endl;
-          return false;
-        }
-
-        if (!is_base64(message["data"]["public_key"])) {
-          std::cerr << "Invalid base64 public_key." << std::endl;
           return false;
         }
       }
