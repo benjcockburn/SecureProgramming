@@ -6,6 +6,10 @@ SecureChatMainWindow::SecureChatMainWindow(QWidget *parent)
     , ui(new Ui::SecureChatMainWindow)
 {
     ui->setupUi(this);
+
+    messageHandler handler;
+    // handler = new messageHandler();
+    handler.sendMessage();
 }
 
 SecureChatMainWindow::~SecureChatMainWindow()
@@ -26,6 +30,8 @@ void SecureChatMainWindow::on_SendMessage_button_clicked()
     QString formatted_message = formatMessage(chat_message,recipient,sender);
     this->ui->plainTextEdit->appendPlainText(formatted_message);
     this->ui->message_text_box->clear();
+
+
 
 }
 

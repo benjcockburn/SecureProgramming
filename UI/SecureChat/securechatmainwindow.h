@@ -2,6 +2,7 @@
 #define SECURECHATMAINWINDOW_H
 
 #include <QMainWindow>
+#include "messagehandler.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
