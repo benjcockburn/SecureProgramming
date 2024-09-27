@@ -26,9 +26,11 @@ private slots:
 
 private:
     Ui::SecureChatMainWindow *ui;
+    messageHandler * handler;
 
+    QString formatMessage(QString text, QString recipient,QString sender);
 
-    QString formatMessage(QString &text, QString &recipient,QString &sender);
+    void DisplayMessage(QString message, QString recipient, QString sender);
 };
 
 

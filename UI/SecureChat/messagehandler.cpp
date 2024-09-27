@@ -1,7 +1,8 @@
 #include "messagehandler.h"
 
-messageHandler::messageHandler() {
-
+messageHandler::messageHandler(QObject *parent)
+    : QObject(parent) // Properly initializing QObject's parent
+{
     // WebSocketClient ws_client;
     // std::string uri = "ws://localhost:8765";  // WebSocket server URL
 
@@ -19,12 +20,13 @@ bool messageHandler::sendMessage(){
 
 messageHandler:: ~messageHandler(){
     this->thread_receiving = false;
+    this->thread_sending = false;
 };
 
 
 void messageHandler::start(){
     // start sending server
-this->thread_receiving=true;
+    this->thread_receiving=true;
     std::thread serverThread(&messageHandler::server, this);
 
 
@@ -86,6 +88,16 @@ int messageHandler::server() {
                 while ((bytes_received = recv(client_fd, buffer, BUFFER_SIZE - 1, 0)) > 0) {
                     buffer[bytes_received] = '\0'; // Null-terminate the buffer
                     std::cout << "Received message: " << buffer << std::endl;
+
+                    // write to screen
+                    QString message = buffer;
+                    QString recipient = "Recipient";
+                    QString sender = "Sender";
+
+                    // Emit the signal to send the message to the main thread
+                    emit messageReceived(message, recipient, sender);
+
+
                 }
 
                 if (bytes_received == -1) {

@@ -1,4 +1,4 @@
-#include <iostream>
+
 #include <string>
 
 #include <thread>
@@ -9,7 +9,9 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+
 #include <unistd.h>
+#include <QObject>
 
 
 #ifndef MESSAGEHANDLER_H
@@ -19,10 +21,11 @@
 
 
 
-class messageHandler
-{
+class messageHandler: public QObject {
+    Q_OBJECT
+
 public:
-    messageHandler();
+    messageHandler(QObject *parent = nullptr);
     bool sendMessage();
 
     volatile bool thread_receiving=false;
@@ -34,6 +37,12 @@ public:
     int server();
 
     ~messageHandler();
+
+
+signals:
+    void messageReceived(QString message, QString recipient, QString sender);
+
+
 };
 
 #endif // MESSAGEHANDLER_H

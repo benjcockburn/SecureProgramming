@@ -7,9 +7,12 @@ SecureChatMainWindow::SecureChatMainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    messageHandler handler;
-    // handler = new messageHandler();
-    handler.sendMessage();
+
+    handler = new messageHandler(this);
+
+
+    connect(handler, &messageHandler::messageReceived, this, &SecureChatMainWindow::DisplayMessage);
+
 }
 
 SecureChatMainWindow::~SecureChatMainWindow()
@@ -41,9 +44,15 @@ void SecureChatMainWindow::on_message_text_box_returnPressed()
     on_SendMessage_button_clicked();
 }
 
-QString SecureChatMainWindow::formatMessage(QString &text, QString &recipient,QString &sender){
+QString SecureChatMainWindow::formatMessage(QString text, QString recipient,QString sender){
     QString formatted_message = sender + QString(" -> ")+recipient + QString(" :: ")+ text;
 
     return formatted_message;
 }
 
+void SecureChatMainWindow::DisplayMessage(QString message, QString recipient, QString sender) {
+
+    QString formatted_message = formatMessage(message,recipient,sender);
+    this->ui->plainTextEdit->appendPlainText(formatted_message);
+
+}
