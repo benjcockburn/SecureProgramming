@@ -138,8 +138,8 @@ server = Server('localhost', 12345)
 #
 # Offset 4 || e.g. 42069 - Used to send chat from server to client. // cpp server
 
-
-operations_type = 'wait'
+operations_type = {}
+operations_type['status'] = 'wait'
 threads_running = True
 
 def start_server(port):
@@ -262,16 +262,16 @@ def operations_send(port):
     global operations_type
     while(threads_running):
         
-        if(operations_type=='wait'):
+        if(operations_type['status']=='wait'):
             time.sleep(1)
             # print("waiting")
             message=""
             operation(input(),6)
             continue
 
-        if(operations_type == 'counter_update'):
-            message=f"counter_update {counter_value}"
-            operations_type='wait'
+        if(operations_type['status'] == 'counter_update'):
+            message=f"counter_update {operations_type['value']}"
+            operations_type['status']='wait'
 
     # Create a socket object
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client_socket:
@@ -296,8 +296,8 @@ def operation(type,value=0):
     global operations_type
     global counter_value
     if type == 'counter_update':
-        counter_value=value
-        operations_type='counter_update'
+        operations_type['value']=value
+        operations_type['status']='counter_update'
 
 
 
