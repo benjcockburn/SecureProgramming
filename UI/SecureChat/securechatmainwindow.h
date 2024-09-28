@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "messagehandler.h"
+#include "client.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -24,9 +25,12 @@ private slots:
 
     void on_message_text_box_returnPressed();
 
+    void on_pushButton_clicked();
+
 private:
     Ui::SecureChatMainWindow *ui;
     messageHandler * handler;
+    client * myself;
 
     QString formatMessage(QString text, QString recipient,QString sender);
 

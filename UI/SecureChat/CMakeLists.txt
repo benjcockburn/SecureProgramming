@@ -17,6 +17,8 @@ set(PROJECT_SOURCES
         securechatmainwindow.cpp
         securechatmainwindow.h
         securechatmainwindow.ui
+        client.h
+        client.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
