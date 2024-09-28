@@ -12,6 +12,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
+# Find and link the Threads library
+find_package(Threads REQUIRED)
+
 set(PROJECT_SOURCES
         main.cpp
         securechatmainwindow.cpp
@@ -19,6 +22,9 @@ set(PROJECT_SOURCES
         securechatmainwindow.ui
         client.h
         client.cpp
+        messagehandler.cpp
+        messagehandler.h
+        decrypt_RSA.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -45,7 +51,8 @@ else()
     endif()
 endif()
 
-target_link_libraries(SecureChat PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+# Link the Threads library along with the Qt Widgets
+target_link_libraries(SecureChat PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Threads::Threads)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

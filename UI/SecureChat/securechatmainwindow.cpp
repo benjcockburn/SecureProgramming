@@ -7,7 +7,7 @@ SecureChatMainWindow::SecureChatMainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-
+this->ui->tabWidget->setCurrentIndex(0);
     this->ui->chat_tab->setEnabled(false);
 
     handler = new messageHandler(this);
@@ -37,7 +37,7 @@ void SecureChatMainWindow::on_SendMessage_button_clicked()
     sender = this->myself->name;
 
     if(this->ui->message_receipients->currentText()=="PUBLIC (to all users online)"){
-        qDebug()<< "Public Chat";
+       qDebug()<< "Public Chat";
 
          recipient = QString("Public");
 
@@ -96,7 +96,7 @@ void SecureChatMainWindow::on_pushButton_clicked()
 
     myself= new client(nickname);
 
-
+    this->ui->keydisplay->setText(nickname);
     this->ui->chat_tab->setEnabled(true);
     this->ui->tabWidget->setCurrentIndex(1);
     this->ui->login_tab->setEnabled(false);
