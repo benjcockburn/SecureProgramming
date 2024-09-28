@@ -94,6 +94,8 @@ void SecureChatMainWindow::on_pushButton_clicked()
 {
     // load the key in /Keys/public_key.pem
 
+    // TODO: make sure python is on before allowing the button to be pressed
+
     QString path = this->ui->key_path_lineedit->text();
 
     std::cout << path.toStdString() << "/public_key.pem" << std::endl;
@@ -112,6 +114,8 @@ void SecureChatMainWindow::on_pushButton_clicked()
     {
         nickname = QString("N/A"); // enter the key here;
     }
+
+    // TODO: if any of these fail it should prevent them continuing
 
     myself = new client(nickname);
     myself->setPublicKey(public_key_read);
