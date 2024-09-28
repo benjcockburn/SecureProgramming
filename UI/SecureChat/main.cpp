@@ -1,5 +1,4 @@
 #include "securechatmainwindow.h"
-#include "messagehandler.h"
 
 #include <QApplication>
 

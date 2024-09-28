@@ -18,6 +18,9 @@ find_package(Threads REQUIRED)
 # Find and link OpenSSL
 find_package(OpenSSL REQUIRED)
 
+# Check if OpenSSL was found and include directories
+
+
 set(PROJECT_SOURCES
         main.cpp
         securechatmainwindow.cpp
@@ -27,6 +30,23 @@ set(PROJECT_SOURCES
         client.cpp
         messagehandler.cpp
         messagehandler.h
+        decrypt_RSA.h
+        decrypt_RSA.cpp
+        encrypt_AES.h
+        encrypt_AES.cpp
+        JsonHandler.cpp
+        JsonHandler.h
+        ecodeBase_64.h
+        ecodeBase_64.cpp
+        decrypt_AES.h
+        decrypt_AES.cpp
+        generate_Keys.h
+        generate_Keys.cpp
+        publicKeyStringConversion.h
+        publicKeyStringConversion.cpp
+        json.hpp
+
+
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

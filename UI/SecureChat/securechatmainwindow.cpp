@@ -1,6 +1,5 @@
 #include "securechatmainwindow.h"
-#include "encrypt_AES.cpp"
-#include "decrypt_RSA.cpp"
+
 
 #include "./ui_securechatmainwindow.h"
 
@@ -87,25 +86,7 @@ void SecureChatMainWindow::DisplayMessage(QString message, QString recipient, QS
 
 }
 
-std::string RSA_to_string(RSA *rsa) {
-    // Create a memory BIO
-    BIO *bio = BIO_new(BIO_s_mem());
-    
-    // Write the RSA public key to the BIO in PEM format
-    PEM_write_bio_RSA_PUBKEY(bio, rsa);
 
-    // Get a pointer to the data in the BIO
-    char *pem_key = nullptr;
-    long pem_len = BIO_get_mem_data(bio, &pem_key);
-
-    // Copy the PEM data into a C++ string
-    std::string key_string(pem_key, pem_len);
-
-    // Clean up
-    BIO_free(bio);
-
-    return key_string;
-}
 void SecureChatMainWindow::on_pushButton_clicked()
 {
     // load the key in /Keys/public_key.pem
@@ -126,12 +107,16 @@ void SecureChatMainWindow::on_pushButton_clicked()
     // set nickname
     QString nickname = this->ui->nickname_lineedit->text();
     if(nickname==""){
-        nickname = QString(RSA_to_string(public_key_read).c_str()); // enter the key here;
+        nickname = QString(rsaPublicKeyToString(public_key_read).c_str()); // enter the key here;
     }
 
     myself= new client(nickname);
     myself->PublicKey= public_key_read;
     myself->PrivateKey= private_key_read;
+
+    // server_hello
+
+
 
     
 

@@ -1,9 +1,6 @@
-#include <openssl/rsa.h>
-#include <openssl/pem.h>
-#include <openssl/err.h>
-#include <vector>
-#include <string>
-#include <iostream>
+
+
+#include "decrypt_RSA.h"
 
 // RSA Decrypt function (for decrypting the AES key)
 bool rsaDecrypt(const std::vector<unsigned char>& encryptedData, std::vector<unsigned char>& decryptedData, RSA* privateKey) {
@@ -19,6 +16,9 @@ bool rsaDecrypt(const std::vector<unsigned char>& encryptedData, std::vector<uns
     decryptedData.resize(len);
     return true;
 }
+
+
+
 
 // Load RSA private key from a file (PEM format)
 RSA* loadPrivateKeyFromFile(const std::string& privateKeyPath) {

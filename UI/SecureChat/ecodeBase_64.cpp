@@ -1,10 +1,8 @@
-#include <iostream>
-#include <openssl/bio.h>
-#include <openssl/evp.h>
-#include <openssl/buffer.h>
-#include <string>
+
 
 // Base64 Encoding Function
+#include "ecodeBase_64.h"
+
 std::string base64Encode(const std::string& input) {
     BIO *bio, *b64;
     BUF_MEM *bufferPtr;
@@ -23,6 +21,7 @@ std::string base64Encode(const std::string& input) {
 
     return encodedData;
 }
+
 
 // Base64 Decoding Function
 std::string base64Decode(const std::string& encodedInput) {
@@ -45,3 +44,4 @@ std::string base64Decode(const std::string& encodedInput) {
 
     return decodedData;
 }
+

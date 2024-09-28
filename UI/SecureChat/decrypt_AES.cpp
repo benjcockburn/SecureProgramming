@@ -1,8 +1,5 @@
-#include <openssl/evp.h>
-#include <openssl/aes.h>
-#include <vector>
-#include <string>
-#include <iostream>
+#include "decrypt_AES.h"
+
 
 // AES Decrypt function
 bool aesDecrypt(const std::vector<unsigned char>& key, const std::vector<unsigned char>& iv,
@@ -41,3 +38,4 @@ bool aesDecrypt(const std::vector<unsigned char>& key, const std::vector<unsigne
     EVP_CIPHER_CTX_free(ctx);
     return true;
 }
+

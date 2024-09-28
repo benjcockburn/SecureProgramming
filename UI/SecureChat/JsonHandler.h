@@ -1,5 +1,20 @@
-#ifndef JSONHANDLER_H
-#define JSONHANDLER_H
+
+
+#ifndef JSONHANDLER_SP
+#define JSONHANDLER_SP
+#include <openssl/err.h>
+#include <openssl/evp.h>
+#include <openssl/pem.h>
+#include <openssl/rand.h>
+#include <openssl/rsa.h>
+
+#include "decrypt_AES.h" // yes
+#include "decrypt_RSA.h" // yes
+#include "ecodeBase_64.h" // yes
+#include "encrypt_AES.h" // yes
+#include "generate_Keys.h"// yes
+#include "publicKeyStringConversion.h" // yes
+#include "json.hpp"
 
 #include <openssl/rsa.h>
 
@@ -7,7 +22,7 @@
 #include <regex>
 #include <string>
 
-#include "json.hpp"
+
 
 class JsonHandler {
  private:

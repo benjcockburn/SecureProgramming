@@ -1,17 +1,6 @@
 #include "JsonHandler.h"
 
-#include <openssl/err.h>
-#include <openssl/evp.h>
-#include <openssl/pem.h>
-#include <openssl/rand.h>
-#include <openssl/rsa.h>
 
-#include "decrypt_AES.cpp"
-#include "decrypt_RSA.cpp"
-#include "ecodeBase_64.cpp"
-#include "encrypt_AES.h"
-#include "generate_Keys.h"
-#include "publicKeyStringConversion.h"
 
 JsonHandler::JsonHandler()
     : base64_regex(

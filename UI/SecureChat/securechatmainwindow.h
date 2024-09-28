@@ -4,6 +4,11 @@
 #include <QMainWindow>
 #include "messagehandler.h"
 #include "client.h"
+#include "decrypt_RSA.h"
+#include "encrypt_AES.h"
+#include "JsonHandler.h"
+
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
