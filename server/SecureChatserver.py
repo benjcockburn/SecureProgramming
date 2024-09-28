@@ -178,13 +178,13 @@ def start_server(port):
 
             if(message['data']['type']=='public_chat'):
                 print("public chat!!")
-                # server.relayPublic(message)
+                # server.relayPublic(message) TODO:
 
 
             # chat
             if(message['data']['type']=='chat'):
                 print("chat!!")
-
+                    #TODO:
             # 
 
 
