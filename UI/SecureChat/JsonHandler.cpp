@@ -7,6 +7,7 @@ JsonHandler::JsonHandler()
           "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$") {}
 
 void JsonHandler::updateCounter(int input){
+  std::cout<< "Counter updated from " << this->counter << " to " << input<<std::endl;
   this->counter = input;
 };
 
