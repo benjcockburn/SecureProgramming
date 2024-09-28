@@ -25,17 +25,18 @@ counter_value = 0
 
 
 
-
 class Server:
     def __init__(self, host, port):
         self.counter = counter_value
         self.host = host
         self.port = port
         self.neighbour_servers = []  # List of connected neighbour servers
-        self.connected_clients = set()  # Track connected clients
+        self.connected_servers = set()  # Track connected servers
+        self.client_list = []
+
 
     async def handler(self, websocket, path):
-        self.connected_clients.add(websocket)
+        self.connected_servers.add(websocket)
         addr = websocket.remote_address
         print(f"Accepted connection from {addr}")
 
@@ -49,13 +50,13 @@ class Server:
             print(f"Error processing message from {addr}: {e}")
 
         finally:
-            self.connected_clients.remove(websocket)
+            self.connected_servers.remove(websocket)
             print(f"Connection to {addr} closed")
 
     async def process_message(self, message, websocket, addr):
-        if message['type'] == 'client_update_request':
+        if message['type'] == 'client_list_request':
             print(f"Received client update request from {addr}")
-            await self.send_client_update(websocket)
+            await self.send_client_list(websocket)
 
         elif message['type'] == 'server_hello':
             print(f"Received server hello from {addr}: {message['data']['sender']}")
@@ -63,13 +64,19 @@ class Server:
         else:
             print(f"Unknown message type from {addr}: {message['type']}")
 
-    async def send_client_update(self, websocket=None):
+    async def send_client_list(self, websocket=None):
         client_update = {
-            "type": "client_update",
-            "clients": []  # Here, you can specify clients if needed
+            "type": "client",
+            "servers": [
+                {
+                    "address": self.host,
+                    "clients": [client for client in self.client_list]
+                }
+            ]
+            # Here, you can specify clients if needed
         }
 
-        print(f"Sending client update: {client_update}")
+        print(f"Sending client list update: {client_update}")
 
         # Send to all neighbour servers
         for server in self.neighbour_servers:
@@ -110,9 +117,18 @@ class Server:
             except Exception as e:
                 print(f"Failed to send public chat to {websocket.remote_address}: {e}")
 
+    def addClient(self,client):
+        self.client_list.append(client)
+        print(self.client_list)
+
+
     def start(self):
         start_server = websockets.serve(self.handler, self.host, self.port)
         print(f"Server listening on {self.host}:{self.port}")
+
+        # server.addClient("-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs7PPRzrrm2ZknkfTYEA8\nhD7DKXQDUbMh2cQbdbPn0uwIHbbOWu9emEVAzovTCQQ33ocUuxwHo5EMFphkpjv4\nyRCPNCFHIG7LeXSPKdBwZTL6Vm8OXfRFzb5dpXQCbCwW2yXZsPvZrL/5ZWy1Be5R\nB9SH1OvIdopX1EhLZyGG21UCP51KAg9Y78CPdnHISb5Sruy8XujLs6zRbugXN/yL\nLrbzpeF9wUrhz4h204JfdoS1eJ01q9dvb2ybkf2tHu54yJD5slftt+sNPKx37zD5\nZ7Rh80KkKntJ2e9cgsZ16Gk+8SZJ50fgUjO2ce0tVCkNiuk+T1T7SDV137NbGCB1\nuwIDAQAB\n-----END PUBLIC KEY-----\n")
+        # server.addClient("-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0Htkylt7i1s2ZTkc0RVT\n25l2pR/HxsxBfAXRkUt9djgBMyy7VJo02v2LvirbKkc+5U7SoBpx0F37s2UF4tD5\nvHN8AsC2GHsIAKHpO87ZLi3mAFdoVu0zGhsk3VnEe+YrsdGPC9uuCTzl6JuKS3qB\nHAfhFiQiEZO0ykWeJhI1A97eHoA0Ed3GGUJArZ43hn9enOcU0lWhP/8NxeZSbZdD\n237L8cBijVgSzc23Bc6/ye7+sI+irg9s+TsmW3i/3hZnKrxeQCBQf1ZqLKoTllO8\nxfxzn+Pvk/mqx+vmBzD4mqMWayWtORwb9vNjXMJrd31yWNMd4JmabLtOaA6wK8nu\n6wIDAQAB\n-----END PUBLIC KEY-----\n")
+
 
         asyncio.get_event_loop().run_until_complete(start_server)
         asyncio.get_event_loop().run_forever()
@@ -124,7 +140,7 @@ class Server:
 # Ports n what they do
 #
 # 12345 - Outside connections coming in
-server = Server('localhost', 12345)
+server = Server('192.168.0.173', 12345)
 #
 # TODO: make this check if already client is on by renedevous with 7999 from cpp
 #
@@ -136,7 +152,7 @@ server = Server('localhost', 12345)
 #
 # Offset 3 || e.g. 8002 - Used to send chat from client to sever,  //python server
 #
-# Offset 4 || e.g. 42069 - Used to send chat from server to client. // cpp server
+# Offset 4 || e.g. 8003 - Used to send chat from server to client. // cpp server
 
 operations_type = {}
 operations_type['status'] = 'wait'
@@ -195,6 +211,8 @@ def start_server(port):
 
 
 def run(port):
+    global server
+
 # Server address and port
     global threads_running
     global counter_value
@@ -219,6 +237,7 @@ def run(port):
 def operations_receive(port):
     global threads_running
     global counter_value
+    global server
         # Create a socket object
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -248,6 +267,10 @@ def operations_receive(port):
             print(f"Received: {message}")
 
             # hello
+            if(message['data']['type']=='hello'):
+                print("client says hello")
+                server.addClient(message['data']['public_key'])
+                
 
             # client list
 
@@ -315,7 +338,7 @@ if __name__ == "__main__":
     
     threads_running = True
 
-    thread_send = threading.Thread(target=run,args=(42069,))
+    thread_send = threading.Thread(target=run,args=(8003,))
     thread_recieve = threading.Thread(target=start_server,args=(8002,))
     thread_operations_receive = threading.Thread(target=operations_receive,args=(8000,))
     thread_operations_send = threading.Thread(target=operations_send,args=(8001,))
@@ -327,6 +350,7 @@ if __name__ == "__main__":
     thread_operations_receive.start()
     thread_operations_send.start()
 
-    # thread_outside_server.start()
+        # thread_outside_server.start()
     server.start()
 
+   

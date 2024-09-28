@@ -28,11 +28,14 @@ void setPrivateKey(RSA *input);
     std::string PublicKeyString();
 
     std::string fingerprint;
+        
 
     private:
     RSA *PrivateKey;
 
     RSA *PublicKey;
+
+
 };
 
 #endif // CLIENT_H

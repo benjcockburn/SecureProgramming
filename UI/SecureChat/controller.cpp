@@ -1,9 +1,9 @@
 #include "controller.h"
 
-controller_sp::controller_sp(JsonHandler *jsonInput)
+controller_sp::controller_sp(JsonHandler *jsonInput,int port)
 {
     this->jsonHandler = jsonInput;
-
+    this->port = port;
     this->start();
 };
 
@@ -31,7 +31,7 @@ int controller_sp::server()
     while (this->thread_receiving_controller)
     {
 
-        const int PORT = 8001;
+        const int PORT = port+1;
         const int BUFFER_SIZE = 1024;
 
         int server_fd = socket(AF_INET, SOCK_STREAM, 0);

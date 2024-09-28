@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="login_tab">
        <attribute name="title">
@@ -50,7 +50,7 @@
           <item>
            <spacer name="verticalSpacer">
             <property name="orientation">
-             <enum>Qt::Vertical</enum>
+             <enum>Qt::Orientation::Vertical</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
@@ -70,7 +70,7 @@
           <item>
            <widget class="QLineEdit" name="key_path_lineedit">
             <property name="text">
-             <string>/home/fitzchivalry/NonWorkspace/SecureProgramming/UI/SecureChat/Keys</string>
+             <string>/Users/ben/Library/CloudStorage/OneDrive-UniversityofAdelaide/Work/Uni/YEAR-3-SEM-2/Secure_Programming/SecureProgramming/UI/SecureChat/Keys</string>
             </property>
            </widget>
           </item>
@@ -149,7 +149,7 @@
             <item>
              <spacer name="verticalSpacer_2">
               <property name="orientation">
-               <enum>Qt::Vertical</enum>
+               <enum>Qt::Orientation::Vertical</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
@@ -176,10 +176,10 @@
             <item>
              <spacer name="horizontalSpacer">
               <property name="orientation">
-               <enum>Qt::Vertical</enum>
+               <enum>Qt::Orientation::Vertical</enum>
               </property>
               <property name="sizeType">
-               <enum>QSizePolicy::Fixed</enum>
+               <enum>QSizePolicy::Policy::Fixed</enum>
               </property>
               <property name="sizeHint" stdset="0">
                <size>
@@ -210,7 +210,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>22</height>
+     <height>24</height>
     </rect>
    </property>
   </widget>

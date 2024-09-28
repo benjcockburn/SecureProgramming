@@ -38,7 +38,7 @@ private:
     messageHandler * handler;
     client * myself;
     JsonHandler * jsonHandler;
-
+    int port = 8000;
     controller_sp * controller;
 
     QString formatMessage(QString text, QString recipient,QString sender);

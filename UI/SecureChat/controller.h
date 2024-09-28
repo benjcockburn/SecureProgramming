@@ -16,16 +16,16 @@
 class controller_sp
 {
 public:
-    controller_sp(JsonHandler * jsonInput);
+    controller_sp(JsonHandler * jsonInput,int port);
 
     JsonHandler * jsonHandler;
 
         void start();
+        int port;
+        volatile bool thread_receiving_controller = false;
+        int server();
 
-    volatile bool thread_receiving_controller=false;
-    int server();
-
-~controller_sp();
+        ~controller_sp();
 };
 
 #endif // CONTROLLER_H

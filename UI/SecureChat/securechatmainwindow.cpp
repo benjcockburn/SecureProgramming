@@ -14,7 +14,7 @@ SecureChatMainWindow::SecureChatMainWindow(QWidget *parent)
 
     jsonHandler = new JsonHandler();
 
-    this->controller = new controller_sp(jsonHandler);
+    this->controller = new controller_sp(jsonHandler,this->port);
 
     connect(handler, &messageHandler::messageReceived, this, &SecureChatMainWindow::DisplayMessage);
 }
@@ -48,7 +48,7 @@ void SecureChatMainWindow::on_SendMessage_button_clicked()
 
 
         recipient = QString("Public");
-        handler->sendMessage(jsonString.c_str(),8002);
+        handler->sendMessage(jsonString.c_str(),this->port +2);
     }
     else
     {
@@ -123,7 +123,7 @@ void SecureChatMainWindow::on_pushButton_clicked()
 
     std::string jsonString = JsonOutput.dump();
 
-    handler->sendMessage(jsonString.c_str(),8000);
+    handler->sendMessage(jsonString.c_str(),this->port);
 
     this->ui->keydisplay->setText(QString(myself->PublicKeyString().c_str()));
 

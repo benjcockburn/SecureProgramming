@@ -95,7 +95,7 @@ int messageHandler::server() {
     while(this->thread_receiving){
 
 
-        const int PORT = 42069;
+        const int PORT = 8003;
         const int BUFFER_SIZE = 1024;
 
 
