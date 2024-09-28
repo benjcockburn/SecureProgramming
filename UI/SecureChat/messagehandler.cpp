@@ -50,13 +50,13 @@ messageHandler::messageHandler(QObject *parent)
 
 
 
-bool messageHandler::sendMessage(const char* message){
+bool messageHandler::sendMessage(const char* message,int port){
 
     // construct the message in json
 
     // send to python to relay
         const char* server_ip = "127.0.0.1";
-    int port = 65432;
+
 
 
     // Call the abstracted function

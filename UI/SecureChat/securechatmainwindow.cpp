@@ -37,19 +37,28 @@ void SecureChatMainWindow::on_SendMessage_button_clicked()
 
     if (this->ui->message_receipients->currentText() == "PUBLIC (to all users online)")
     {
-        //    qDebug()<< "Public Chat";
+        
+
+        //TODO: add in correct reciepient
+        nlohmann::json JsonOutput = jsonHandler->constructPublicChat(myself->fingerprint,chat_message.toStdString().c_str());
+
+        std::string jsonString = JsonOutput.dump();
+
 
         recipient = QString("Public");
-
-        handler->sendMessage(chat_message.toStdString().c_str());
+        handler->sendMessage(jsonString.c_str(),8010);
     }
     else
     {
         recipient = this->ui->message_receipients->currentText();
     }
 
-    QString formatted_message = formatMessage(chat_message, recipient, sender);
 
+
+
+
+    // QT VISUALS STUFF
+    QString formatted_message = formatMessage(chat_message, recipient, sender);
     this->ui->plainTextEdit->appendPlainText(formatted_message);
     this->ui->message_text_box->clear();
 
@@ -103,8 +112,8 @@ void SecureChatMainWindow::on_pushButton_clicked()
     }
 
     myself = new client(nickname);
-    myself->PublicKey = public_key_read;
-    myself->PrivateKey = private_key_read;
+    myself->setPublicKey(public_key_read);
+    myself->setPrivateKey(private_key_read);
 
     // server_hello
 
@@ -112,7 +121,7 @@ void SecureChatMainWindow::on_pushButton_clicked()
 
     std::string jsonString = JsonOutput.dump();
 
-    handler->sendMessage(jsonString.c_str());
+    handler->sendMessage(jsonString.c_str(),12345);
 
     this->ui->keydisplay->setText(QString(myself->PublicKeyString().c_str()));
 
