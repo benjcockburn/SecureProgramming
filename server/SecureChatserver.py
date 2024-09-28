@@ -13,29 +13,36 @@ PORT = 42069
 
 threads_running = True
 
-def start_server(host='127.0.0.1', port=65432):
-    global threads_running
+def start_server():
     # Create a socket object
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        # Bind the socket to the host and port
-        s.bind((host, port))
-        # Listen for incoming connections (backlog = 1)
-        s.listen(1)
-        print(f"Server listening on {host}:{port}...")
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-        # Accept the incoming connection
-        conn, addr = s.accept()
-        with conn:
-            print(f"Connected by {addr}")
-            while True:
-                # Receive data in chunks (1024 bytes in this case)
-                data = conn.recv(1024)
-                if not data:
-                    # If no data is received, break the loop and close the connection
-                    break
-                print(f"Received: {data.decode('utf-8')}")
-                # Optionally, send back a response
-                conn.sendall(b'ACK: ' + data)
+    # Allow the server to reuse the same port immediately after closing
+    server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+    # Bind to the address and port
+    server_socket.bind(('127.0.0.1', 65432))
+
+    # Start listening for incoming connections
+    server_socket.listen(1)
+    print("Server is listening on port 65432...")
+
+    while True:
+        # Accept the connection
+        client_socket, client_address = server_socket.accept()
+        print(f"Connection from {client_address}")
+
+        # Receive data from the client
+        data = client_socket.recv(1024)
+        if not data:
+            print("No data received, closing connection.")
+        else:
+            print(f"Received: {data.decode()}")
+
+        # Close the client socket after receiving the message
+        client_socket.close()
+        print("Connection closed. Waiting for a new message...\n")
+
 
 
 def run():

@@ -61,7 +61,7 @@ void SecureChatMainWindow::on_SendMessage_button_clicked()
     this->ui->plainTextEdit->appendPlainText(formatted_message);
     this->ui->message_text_box->clear();
 
-
+    this->handler->sendMessage();
 
 
 

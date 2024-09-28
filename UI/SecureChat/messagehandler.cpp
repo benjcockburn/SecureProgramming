@@ -1,5 +1,43 @@
 #include "messagehandler.h"
 
+
+
+int connectAndSend(const char* server_ip, int port, const char* message) {
+    // Create a socket
+    int clientSocket = socket(AF_INET, SOCK_STREAM, 0);
+    if (clientSocket == -1) {
+        std::cerr << "Error creating socket!" << std::endl;
+        return -1;
+    }
+
+    // Define the server address
+    struct sockaddr_in serverAddress;
+    serverAddress.sin_family = AF_INET;
+    serverAddress.sin_port = htons(port);  // Port number
+    serverAddress.sin_addr.s_addr = inet_addr(server_ip);  // Server's IP
+
+    // Connect to the server
+    int connectionStatus = connect(clientSocket, (struct sockaddr *) &serverAddress, sizeof(serverAddress));
+    if (connectionStatus == -1) {
+        std::cerr << "Error connecting to the server!" << std::endl;
+        close(clientSocket);
+        return -1;
+    }
+
+    // Send data to the server
+    if (send(clientSocket, message, strlen(message), 0) < 0) {
+        std::cerr << "Error sending data!" << std::endl;
+        close(clientSocket);
+        return -1;
+    }
+    std::cout << "Data sent: " << message << std::endl;
+
+    // Close the socket
+    close(clientSocket);
+    return 0;  // Return 0 on success
+}
+
+
 messageHandler::messageHandler(QObject *parent)
     : QObject(parent) // Properly initializing QObject's parent
 {
@@ -17,7 +55,17 @@ bool messageHandler::sendMessage(){
     // construct the message in json
 
     // send to python to relay
+        const char* server_ip = "127.0.0.1";
+    int port = 65432;
+    const char* message = "Hello from C++ client!";
 
+    // Call the abstracted function
+    int result = connectAndSend(server_ip, port, message);
+    if (result == 0) {
+        std::cout << "Message sent successfully." << std::endl;
+    } else {
+        std::cerr << "Failed to send message." << std::endl;
+    }
 
     return false;
 
@@ -125,7 +173,6 @@ int messageHandler::server() {
 
     return 0;
 }
-
 
 
 

@@ -10,6 +10,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
+#include <arpa/inet.h>   // For inet_addr and htons
 #include <unistd.h>
 #include <QObject>
 
