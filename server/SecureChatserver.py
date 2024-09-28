@@ -130,13 +130,13 @@ server = Server('localhost', 12345)
 #
 # 7999 - Intial connection checker, client asks for avaiable ports and server responds #TODO: Implement this
 #
-# Offset 1 || e.g. 8000 - Used to recieve client requests
+# Offset 1 || e.g. 8000 - Used to recieve client requests  // python server
 #
-# Offset 2 || e.g. 8001 - Used to send client updates (operations)
+# Offset 2 || e.g. 8001 - Used to send client updates (operations)  // cpp server
 #
-# Offset 3 || e.g. 8002 - Used to send chat from client to sever, 
+# Offset 3 || e.g. 8002 - Used to send chat from client to sever,  //python server
 #
-# Offset 4 || e.g. 8003 - Used to send chat from server to client.
+# Offset 4 || e.g. 42069 - Used to send chat from server to client. // cpp server
 
 
 
@@ -199,7 +199,8 @@ def run(port):
     global threads_running
     global counter_value
     while(threads_running):
-        message=input()
+        message="Hello!!! - from message port"
+        time.sleep(9)
 
     # Create a socket object
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client_socket:
@@ -258,6 +259,23 @@ def operations_receive(port):
 def operations_send(port):
     global threads_running
     global counter_value
+    while(threads_running):
+        message="operations port!"
+        time.sleep(10)
+
+    # Create a socket object
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client_socket:
+            try:
+                # Connect to the server
+                client_socket.connect((SERVER_ADDRESS, port))
+                
+                # Send the message
+                client_socket.sendall(message.encode('utf-8'))
+                
+                print("Message sent successfully.")
+            
+            except ConnectionError as e:
+                print(f"Connection error: {e}")
 
     # port should be 8001
 

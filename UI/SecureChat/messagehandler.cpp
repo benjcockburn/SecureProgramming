@@ -122,7 +122,7 @@ int messageHandler::server() {
                 return 1;
             }
 
-            std::cout << "Server listening on port " << PORT << "..." << std::endl;
+            std::cout << "Server listening on port " << PORT << " for messages..." << std::endl;
 
             while (true) {
                 sockaddr_in client_addr{};
