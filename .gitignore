@@ -10,3 +10,5 @@ UI/SecureChat/cmake_install.cmake
 UI/SecureChat/CMakeCache.txt
 UI/SecureChat/SecureChat
 UI/SecureChat/SecureChat.cbp
+CMakeLists.txt.user
+.DS_Store
