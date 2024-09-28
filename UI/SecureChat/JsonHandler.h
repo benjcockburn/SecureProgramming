@@ -35,6 +35,7 @@ class JsonHandler {
   bool verifySignature(const nlohmann::json& message);
 
  public:
+ void updateCounter(int input);
   JsonHandler();
 
   // JSON Construction

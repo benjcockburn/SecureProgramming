@@ -7,6 +7,7 @@
 #include "decrypt_RSA.h"
 #include "encrypt_AES.h"
 #include "JsonHandler.h"
+#include "controller.h"
 
 
 
@@ -37,6 +38,8 @@ private:
     messageHandler * handler;
     client * myself;
     JsonHandler * jsonHandler;
+
+    controller_sp * controller;
 
     QString formatMessage(QString text, QString recipient,QString sender);
 

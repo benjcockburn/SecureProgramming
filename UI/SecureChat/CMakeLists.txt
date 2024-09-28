@@ -45,7 +45,8 @@ set(PROJECT_SOURCES
         publicKeyStringConversion.h
         publicKeyStringConversion.cpp
         json.hpp
-
+        controller.cpp
+        controller.h
 
 )
 

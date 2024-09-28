@@ -2,6 +2,18 @@ import socket
 import threading
 import time
 
+import json
+import asyncio
+
+import websockets
+
+
+def clean_json_string(json_string):
+    # Example cleanup logic (e.g., removing any trailing commas, fixing quotes, etc.)
+    json_string = json_string.strip()
+    # Add more cleanup logic if needed
+    return json_string
+
 # Define the host and port
 
 # Create a socket object
@@ -11,8 +23,8 @@ SERVER_ADDRESS = '127.0.0.1'  # Localhost
 
 counter_value = 0
 
-import socket
-import json
+
+
 
 class Server:
     def __init__(self, host, port):
@@ -20,50 +32,38 @@ class Server:
         self.host = host
         self.port = port
         self.neighbour_servers = []  # List of connected neighbour servers
+        self.connected_clients = set()  # Track connected clients
 
-    def start(self):
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.bind((self.host, self.port))
-            s.listen()
-            print(f"Server listening on {self.host}:{self.port}")
+    async def handler(self, websocket, path):
+        self.connected_clients.add(websocket)
+        addr = websocket.remote_address
+        print(f"Accepted connection from {addr}")
 
-            while True:
-                conn, addr = s.accept()
-                print(f"Accepted connection from {addr}")
-                with conn:
-                    self.handle_connection(conn, addr)
-
-    def handle_connection(self, conn, addr):
-        print(f"Server connected to {addr}")
         try:
-            while True:
-                data = conn.recv(1024)
-                if not data:
-                    print(f"Connection closed by {addr}")
-                    break
+            async for message in websocket:
+                data = json.loads(message)
+                print(f"Received message from {addr}: {data}")
+                await self.process_message(data, websocket, addr)
 
-                message = json.loads(data.decode('utf-8'))
-                print(f"Received message from {addr}: {message}")
-                self.process_message(message, conn, addr)
-
-        except (ConnectionResetError, json.JSONDecodeError) as e:
+        except (websockets.exceptions.ConnectionClosedError, json.JSONDecodeError) as e:
             print(f"Error processing message from {addr}: {e}")
+
         finally:
-            conn.close()
+            self.connected_clients.remove(websocket)
             print(f"Connection to {addr} closed")
 
-    def process_message(self, message, conn, addr):
+    async def process_message(self, message, websocket, addr):
         if message['type'] == 'client_update_request':
             print(f"Received client update request from {addr}")
-            self.send_client_update(conn)
-        
+            await self.send_client_update(websocket)
+
         elif message['type'] == 'server_hello':
             print(f"Received server hello from {addr}: {message['data']['sender']}")
-        
+
         else:
             print(f"Unknown message type from {addr}: {message['type']}")
 
-    def send_client_update(self, conn=None):
+    async def send_client_update(self, websocket=None):
         client_update = {
             "type": "client_update",
             "clients": []  # Here, you can specify clients if needed
@@ -74,20 +74,20 @@ class Server:
         # Send to all neighbour servers
         for server in self.neighbour_servers:
             try:
-                server.send(json.dumps(client_update).encode('utf-8'))
-                print(f"Sent client update to neighbour server: {server.getpeername()}")
+                await server.send(json.dumps(client_update))
+                print(f"Sent client update to neighbour server: {server.remote_address}")
             except Exception as e:
-                print(f"Failed to send client update to {server.getpeername()}: {e}")
+                print(f"Failed to send client update to {server.remote_address}: {e}")
 
         # Optionally send to the requesting server
-        if conn:
-            conn.send(json.dumps(client_update).encode('utf-8'))
-            print(f"Sent client update to server {conn.getpeername()}")
+        if websocket:
+            await websocket.send(json.dumps(client_update))
+            print(f"Sent client update to server {websocket.remote_address}")
 
-    def connect_to_neighbour(self, neighbour_ip, neighbour_port):
+    async def connect_to_neighbour(self, neighbour_ip, neighbour_port):
         try:
-            neighbour = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            neighbour.connect((neighbour_ip, neighbour_port))
+            uri = f"ws://{neighbour_ip}:{neighbour_port}"
+            neighbour = await websockets.connect(uri)
             self.neighbour_servers.append(neighbour)
 
             server_hello = {
@@ -96,11 +96,27 @@ class Server:
                     "sender": self.host
                 }
             }
-            neighbour.send(json.dumps(server_hello).encode('utf-8'))
+            await neighbour.send(json.dumps(server_hello))
             print(f"Connected to neighbour server at {neighbour_ip}:{neighbour_port}")
 
         except Exception as e:
             print(f"Failed to connect to neighbour server {neighbour_ip}:{neighbour_port}: {e}")
+
+    async def relay_public(self, message):
+        for websocket in self.neighbour_servers:
+            try:
+                await websocket.send(json.dumps(message))
+                print(f"Sent public chat to neighbour server: {websocket.remote_address}")
+            except Exception as e:
+                print(f"Failed to send public chat to {websocket.remote_address}: {e}")
+
+    def start(self):
+        start_server = websockets.serve(self.handler, self.host, self.port)
+        print(f"Server listening on {self.host}:{self.port}")
+
+        asyncio.get_event_loop().run_until_complete(start_server)
+        asyncio.get_event_loop().run_forever()
+
 
 
 
@@ -119,6 +135,8 @@ server = Server('localhost', 12345)
 # Offset 2 || e.g. 8001 - Used to send client updates (operations)
 #
 # Offset 3 || e.g. 8002 - Used to send chat from client to sever, 
+#
+# Offset 4 || e.g. 8003 - Used to send chat from server to client.
 
 
 
@@ -127,6 +145,7 @@ threads_running = True
 def start_server(port):
     global threads_running
     global counter_value
+    global server
     # Create a socket object
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -157,7 +176,14 @@ def start_server(port):
 
             # public chat
 
+            if(message['data']['type']=='public_chat'):
+                print("public chat!!")
+                # server.relayPublic(message)
+
+
             # chat
+            if(message['data']['type']=='chat'):
+                print("chat!!")
 
             # 
 
@@ -168,7 +194,7 @@ def start_server(port):
 
 
 
-def run():
+def run(port):
 # Server address and port
     global threads_running
     global counter_value
@@ -179,7 +205,7 @@ def run():
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client_socket:
             try:
                 # Connect to the server
-                client_socket.connect((SERVER_ADDRESS, PORT))
+                client_socket.connect((SERVER_ADDRESS, port))
                 
                 # Send the message
                 client_socket.sendall(message.encode('utf-8'))
@@ -211,11 +237,13 @@ def operations_receive(port):
         print(f"Connection from {client_address}")
 
         # Receive data from the client
-        data = client_socket.recv(1024)
+        data = client_socket.recv(4000)
         if not data:
             print("No data received, closing connection.")
         else:
-            message = json.loads(data.decode('utf-8'))
+            cleaned_string = clean_json_string(data.decode('utf-8'))
+            # print(cleaned_string)
+            message = json.loads(cleaned_string)
             print(f"Received: {message}")
 
             # hello
@@ -253,16 +281,17 @@ if __name__ == "__main__":
     
     threads_running = True
 
-    thread_send = threading.Thread(target=run)
+    thread_send = threading.Thread(target=run,args=(42069,))
     thread_recieve = threading.Thread(target=start_server,args=(8002,))
     thread_operations_receive = threading.Thread(target=operations_receive,args=(8000,))
     thread_operations_send = threading.Thread(target=operations_send,args=(8001,))
 
-    thread_outside_server = threading.Thread(target=OutsideServer_start)
+    # thread_outside_server = threading.Thread(target=OutsideServer_start)
 
     thread_send.start()
     thread_recieve.start()
     thread_operations_receive.start()
     thread_operations_send.start()
 
-    thread_outside_server.start()
+    # thread_outside_server.start()
+    server.start()
