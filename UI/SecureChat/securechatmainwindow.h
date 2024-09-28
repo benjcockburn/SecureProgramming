@@ -8,6 +8,7 @@
 #include "encrypt_AES.h"
 #include "JsonHandler.h"
 #include "controller.h"
+#include "recipient.h"
 
 
 
@@ -25,6 +26,8 @@ public:
     SecureChatMainWindow(QWidget *parent = nullptr);
     ~SecureChatMainWindow();
 
+    void addRecipient(std::string server,RSA * PublicRSA);
+
 private slots:
 
     void on_SendMessage_button_clicked();
@@ -33,6 +36,10 @@ private slots:
 
     void on_pushButton_clicked();
 
+    void on_try_attempt_clicked();
+
+    void on_nickname_lineedit_returnPressed();
+
 private:
     Ui::SecureChatMainWindow *ui;
     messageHandler * handler;
@@ -40,6 +47,9 @@ private:
     JsonHandler * jsonHandler;
     int port = 8000;
     controller_sp * controller;
+    std::vector<recipient> list;
+
+    
 
     QString formatMessage(QString text, QString recipient,QString sender);
 

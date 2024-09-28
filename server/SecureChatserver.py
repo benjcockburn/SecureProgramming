@@ -54,12 +54,18 @@ class Server:
             print(f"Connection to {addr} closed")
 
     async def process_message(self, message, websocket, addr):
-        if message['type'] == 'client_list_request':
+        if message['data']['type'] == 'client_list_request':
             print(f"Received client update request from {addr}")
             await self.send_client_list(websocket)
 
-        elif message['type'] == 'server_hello':
+        elif message['data']['type'] == 'server_hello':
             print(f"Received server hello from {addr}: {message['data']['sender']}")
+
+        elif message['data']['type'] == 'connect':
+            # print("about to attack")
+            await self.connect_to_neighbour(message['data']['ip'],message['data']['port'])
+            # print("did it work?")
+
 
         else:
             print(f"Unknown message type from {addr}: {message['type']}")
@@ -181,7 +187,7 @@ def start_server(port):
         print(f"Connection from {client_address}")
 
         # Receive data from the client
-        data = client_socket.recv(1024)
+        data = client_socket.recv(5000)
         if not data:
             print("No data received, closing connection.")
         else:

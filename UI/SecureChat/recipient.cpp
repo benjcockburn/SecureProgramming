@@ -1,6 +1,6 @@
-#include "client.h"
+#include "recipient.h"
 
-std::string createFingerPrint_client(const std::string &pemPublicKey)
+std::string createFingerPrint_recipient(const std::string &pemPublicKey)
 {
     // Load RSA public key
     BIO *bio = BIO_new_mem_buf(pemPublicKey.c_str(), -1);
@@ -32,26 +32,21 @@ std::string createFingerPrint_client(const std::string &pemPublicKey)
     return base64EncodedHash;
 }
 
-client::client(QString input)
+recipient::recipient(std::string server, RSA *PublicRSA)
 {
-    this->name = input;
+    this->dest_server = server;
+    this->setPublicKey(PublicRSA);
 }
 
-void client::setPublicKey(RSA *input)
+void recipient::setPublicKey(RSA *input)
 {
 
     this->PublicKey = input;
 
-    this->fingerprint= createFingerPrint_client(this->PublicKeyString());
+    this->fingerPrint = createFingerPrint_recipient(this->PublicKeyString());
 }
 
-void client::setPrivateKey(RSA *input){
-this->PrivateKey=input;
-};
-
-
-
-std::string client::PublicKeyString()
+std::string recipient::PublicKeyString()
 {
     return rsaPublicKeyToString(this->PublicKey);
 };

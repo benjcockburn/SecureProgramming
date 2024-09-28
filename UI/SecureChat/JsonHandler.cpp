@@ -41,7 +41,7 @@ nlohmann::json JsonHandler::constructChat(
     const std::vector<std::string>& publicKeys) {
   std::vector<std::string> base64participants;
   for (const auto& participant : participants) {
-    base64participants.push_back(base64Encode(participant));
+    base64participants.push_back((participant));
   }
   nlohmann::json chatBlock = {{"participants", base64participants},
                               {"message", message}};
