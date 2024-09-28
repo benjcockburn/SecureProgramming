@@ -14,6 +14,11 @@ messageHandler::messageHandler(QObject *parent)
 
 bool messageHandler::sendMessage(){
 
+    // construct the message in json
+
+    // send to python to relay
+
+
     return false;
 
 }

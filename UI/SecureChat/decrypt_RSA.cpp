@@ -26,6 +26,8 @@ RSA* loadPrivateKeyFromFile(const std::string& privateKeyPath) {
     if (!privKeyFile) {
         std::cerr << "Error opening private key file: " << privateKeyPath << std::endl;
         return nullptr;
+    } else {
+        std::cout << "Private Key Loaded" << std::endl;
     }
     RSA* rsa = PEM_read_RSAPrivateKey(privKeyFile, NULL, NULL, NULL);
     fclose(privKeyFile);

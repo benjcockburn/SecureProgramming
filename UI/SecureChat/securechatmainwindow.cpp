@@ -1,4 +1,7 @@
 #include "securechatmainwindow.h"
+#include "encrypt_AES.cpp"
+#include "decrypt_RSA.cpp"
+
 #include "./ui_securechatmainwindow.h"
 
 SecureChatMainWindow::SecureChatMainWindow(QWidget *parent)
@@ -37,7 +40,7 @@ void SecureChatMainWindow::on_SendMessage_button_clicked()
     sender = this->myself->name;
 
     if(this->ui->message_receipients->currentText()=="PUBLIC (to all users online)"){
-       qDebug()<< "Public Chat";
+    //    qDebug()<< "Public Chat";
 
          recipient = QString("Public");
 
@@ -84,17 +87,53 @@ void SecureChatMainWindow::DisplayMessage(QString message, QString recipient, QS
 
 }
 
+std::string RSA_to_string(RSA *rsa) {
+    // Create a memory BIO
+    BIO *bio = BIO_new(BIO_s_mem());
+    
+    // Write the RSA public key to the BIO in PEM format
+    PEM_write_bio_RSA_PUBKEY(bio, rsa);
+
+    // Get a pointer to the data in the BIO
+    char *pem_key = nullptr;
+    long pem_len = BIO_get_mem_data(bio, &pem_key);
+
+    // Copy the PEM data into a C++ string
+    std::string key_string(pem_key, pem_len);
+
+    // Clean up
+    BIO_free(bio);
+
+    return key_string;
+}
 void SecureChatMainWindow::on_pushButton_clicked()
 {
-    // generate a key
+    // load the key in /Keys/public_key.pem
+
+    QString path = this->ui->key_path_lineedit->text();
+
+    std::cout << path.toStdString() << "/public_key.pem"<< std::endl;
+
+    RSA* public_key_read = loadPublicKey(path.toStdString()+"/public_key.pem"); 
+
+
+// private key
+
+    RSA* private_key_read = loadPrivateKeyFromFile(path.toStdString() + "/private_key.pem");
+
+    std::cout << path.toStdString() <<  "/private_key.pem"<< std::endl;
 
     // set nickname
     QString nickname = this->ui->nickname_lineedit->text();
     if(nickname==""){
-        nickname = QString("Key"); // enter the key here;
+        nickname = QString(RSA_to_string(public_key_read).c_str()); // enter the key here;
     }
 
     myself= new client(nickname);
+    myself->PublicKey= public_key_read;
+    myself->PrivateKey= private_key_read;
+
+    
 
     this->ui->keydisplay->setText(nickname);
     this->ui->chat_tab->setEnabled(true);

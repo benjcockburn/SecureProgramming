@@ -1,6 +1,6 @@
 #ifndef SECURECHATMAINWINDOW_H
 #define SECURECHATMAINWINDOW_H
-
+#include <iostream>
 #include <QMainWindow>
 #include "messagehandler.h"
 #include "client.h"
