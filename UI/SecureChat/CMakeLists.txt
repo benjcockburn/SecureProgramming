@@ -15,6 +15,9 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 # Find and link the Threads library
 find_package(Threads REQUIRED)
 
+# Find and link OpenSSL
+find_package(OpenSSL REQUIRED)
+
 set(PROJECT_SOURCES
         main.cpp
         securechatmainwindow.cpp
@@ -24,7 +27,6 @@ set(PROJECT_SOURCES
         client.cpp
         messagehandler.cpp
         messagehandler.h
-        decrypt_RSA.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -51,8 +53,8 @@ else()
     endif()
 endif()
 
-# Link the Threads library along with the Qt Widgets
-target_link_libraries(SecureChat PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Threads::Threads)
+# Link the Threads and OpenSSL libraries along with the Qt Widgets
+target_link_libraries(SecureChat PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Threads::Threads OpenSSL::SSL OpenSSL::Crypto)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
