@@ -27,7 +27,7 @@ def start_server():
     server_socket.listen(1)
     print("Server is listening on port 65432...")
 
-    while True:
+    while threads_running:
         # Accept the connection
         client_socket, client_address = server_socket.accept()
         print(f"Connection from {client_address}")

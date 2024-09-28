@@ -36,6 +36,7 @@ private:
     Ui::SecureChatMainWindow *ui;
     messageHandler * handler;
     client * myself;
+    JsonHandler * jsonHandler;
 
     QString formatMessage(QString text, QString recipient,QString sender);
 
