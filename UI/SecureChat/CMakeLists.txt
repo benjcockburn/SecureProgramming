@@ -47,6 +47,8 @@ set(PROJECT_SOURCES
         json.hpp
         controller.cpp
         controller.h
+        recipient.h
+        recipient.cpp
 
 )
 

@@ -40,6 +40,8 @@ private slots:
 
     void on_nickname_lineedit_returnPressed();
 
+    void on_python_tryconnect_clicked();
+
 private:
     Ui::SecureChatMainWindow *ui;
     messageHandler * handler;

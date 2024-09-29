@@ -222,9 +222,11 @@ def run(port):
 # Server address and port
     global threads_running
     global counter_value
+    message=""
     while(threads_running):
-        message="Hello!!! - from message port"
-        time.sleep(9)
+        
+        if(message==""):
+            continue
 
     # Create a socket object
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client_socket:
@@ -276,6 +278,9 @@ def operations_receive(port):
             if(message['data']['type']=='hello'):
                 print("client says hello")
                 server.addClient(message['data']['public_key'])
+            
+            if(message['data']['type']=='ping'):
+                print("client pinging server")
                 
 
             # client list

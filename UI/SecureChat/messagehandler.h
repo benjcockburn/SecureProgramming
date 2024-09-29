@@ -28,7 +28,7 @@ class messageHandler: public QObject {
 public:
     messageHandler(QObject *parent = nullptr);
     bool sendMessage(const char* message,int port);
-
+    // int connectAndSend(const char* server_ip, int port, const char* message);
     volatile bool thread_receiving=false;
     volatile bool thread_sending= false;
 

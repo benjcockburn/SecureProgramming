@@ -2,6 +2,7 @@
 
 
 
+
 int connectAndSend(const char* server_ip, int port, const char* message) {
     // Create a socket
     int clientSocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -63,11 +64,13 @@ bool messageHandler::sendMessage(const char* message,int port){
     int result = connectAndSend(server_ip, port, message);
     if (result == 0) {
         std::cout << "Message sent successfully." << std::endl;
+        return true;
     } else {
         std::cerr << "Failed to send message." << std::endl;
+        return false;
     }
 
-    return false;
+
 
 }
 

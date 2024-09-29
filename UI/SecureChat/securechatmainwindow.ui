@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="login_tab">
        <attribute name="title">
@@ -43,9 +43,30 @@
           <item>
            <widget class="QPushButton" name="pushButton">
             <property name="text">
-             <string>Generate Key</string>
+             <string>LOAD Key</string>
             </property>
            </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <property name="topMargin">
+             <number>20</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="python_status">
+              <property name="text">
+               <string>Python NOT RUNNING</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="python_tryconnect">
+              <property name="text">
+               <string>Retry Connection</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
            <spacer name="verticalSpacer">
