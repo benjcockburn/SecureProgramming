@@ -66,6 +66,12 @@ class Server:
             await self.connect_to_neighbour(message['data']['ip'],message['data']['port'])
             # print("did it work?")
 
+        elif message['data']['type'] == 'chat':
+            set_message(message)
+        
+        elif message['data']['type'] == 'public_chat':
+            set_message(message)
+
 
         else:
             print(f"Unknown message type from {addr}: {message['type']}")
@@ -144,6 +150,9 @@ class Server:
             await neighbour.send(json.dumps(message))
         except Exception as e:
                 print(f"Failed to send private chat to {destination}: {e}")
+        
+        # print("back to people") Turn this on the route the message back to the user
+        # set_message(message)
             
         
 
@@ -164,7 +173,9 @@ class Server:
         await start_server
 
 
-
+def set_message(chat):
+    global reporting_message
+    reporting_message = chat
 
 #
 # Ports n what they do
@@ -238,7 +249,7 @@ def start_server(port):
         client_socket.close()
         print("Connection closed. Waiting for a new message...\n")
 
-
+reporting_message=""
 
 def run(port):
     global server
@@ -246,11 +257,13 @@ def run(port):
 # Server address and port
     global threads_running
     global counter_value
-    message=""
+    global reporting_message
     while(threads_running):
         
-        if(message==""):
+        if(reporting_message==""):
             continue
+        else:
+            message=json.dumps(reporting_message)
 
     # Create a socket object
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client_socket:
@@ -262,6 +275,8 @@ def run(port):
                 client_socket.sendall(message.encode('utf-8'))
                 
                 print("Message sent successfully.")
+
+                reporting_message=""
             
             except ConnectionError as e:
                 print(f"Connection error: {e}")

@@ -99,7 +99,7 @@ int messageHandler::server() {
 
 
         const int PORT = 8003;
-        const int BUFFER_SIZE = 1024;
+        const int BUFFER_SIZE = 4024;
 
 
             int server_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -146,6 +146,14 @@ int messageHandler::server() {
                     std::cout << "Received message: " << buffer << std::endl;
 
                     // write to screen
+                    // QString message = buffer;
+
+
+
+
+
+
+
                     QString message = buffer;
                     QString recipient = "Recipient";
                     QString sender = "Sender";

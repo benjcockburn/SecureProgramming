@@ -50,3 +50,7 @@ std::string recipient::PublicKeyString()
 {
     return rsaPublicKeyToString(this->PublicKey);
 };
+
+recipient::recipient(){
+
+};

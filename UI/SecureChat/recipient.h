@@ -18,6 +18,8 @@
 class recipient
 {
 public:
+
+    recipient();
     recipient(std::string server,RSA * PublicRSA);
 
     std::string dest_server;

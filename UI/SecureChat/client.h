@@ -30,7 +30,7 @@ void setPrivateKey(RSA *input);
     std::string fingerprint;
         
 
-    private:
+
     RSA *PrivateKey;
 
     RSA *PublicKey;

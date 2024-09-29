@@ -60,8 +60,8 @@ public:
     std::string findMessageType(const nlohmann::json &message);
 
     // Decrypt Chat Message
-    nlohmann::json decryptChat(const nlohmann::json &message,
-                               const std::string &privateKey);
+    nlohmann::json decryptChat(const nlohmann::json& message,
+                            RSA* rsa_privateKey);
 };
 
 #endif

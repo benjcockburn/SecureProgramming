@@ -10,6 +10,8 @@
 #include "controller.h"
 #include "recipient.h"
 
+#include <unordered_map>
+
 
 
 QT_BEGIN_NAMESPACE
@@ -49,7 +51,7 @@ private:
     JsonHandler * jsonHandler;
     int port = 8000;
     controller_sp * controller;
-    std::vector<recipient> list;
+    std::unordered_map<std::string,recipient> list;
 
     
 

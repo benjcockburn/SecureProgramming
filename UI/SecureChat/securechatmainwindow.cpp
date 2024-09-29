@@ -19,7 +19,9 @@ SecureChatMainWindow::SecureChatMainWindow(QWidget *parent)
     connect(handler, &messageHandler::messageReceived, this, &SecureChatMainWindow::DisplayMessage);
 
     // add fake people!
-    this->addRecipient("192.168.0.239:12346", stringToRsaPublicKey("-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0Htkylt7i1s2ZTkc0RVT\n25l2pR/HxsxBfAXRkUt9djgBMyy7VJo02v2LvirbKkc+5U7SoBpx0F37s2UF4tD5\nvHN8AsC2GHsIAKHpO87ZLi3mAFdoVu0zGhsk3VnEe+YrsdGPC9uuCTzl6JuKS3qB\nHAfhFiQiEZO0ykWeJhI1A97eHoA0Ed3GGUJArZ43hn9enOcU0lWhP/8NxeZSbZdD\n237L8cBijVgSzc23Bc6/ye7+sI+irg9s+TsmW3i/3hZnKrxeQCBQf1ZqLKoTllO8\nxfxzn+Pvk/mqx+vmBzD4mqMWayWtORwb9vNjXMJrd31yWNMd4JmabLtOaA6wK8nu\n6wIDAQAB\n-----END PUBLIC KEY-----\n"));
+    this->addRecipient("192.168.0.239:12346",loadPublicKey("/Users/ben/Library/CloudStorage/OneDrive-UniversityofAdelaide/Work/Uni/YEAR-3-SEM-2/Secure_Programming/SecureProgramming/public_key_example_2.pem") );
+    this->addRecipient("192.168.0.179:12345",loadPublicKey("/Users/ben/Library/CloudStorage/OneDrive-UniversityofAdelaide/Work/Uni/YEAR-3-SEM-2/Secure_Programming/SecureProgramming/public_key_example_1.pem") );
+
 
     on_python_tryconnect_clicked();
 
@@ -41,7 +43,7 @@ void SecureChatMainWindow::on_SendMessage_button_clicked()
         return;
     }
     QString sender;
-    QString recipient;
+    QString recipient_value;
 
     sender = this->myself->name;
 
@@ -53,38 +55,53 @@ void SecureChatMainWindow::on_SendMessage_button_clicked()
 
         std::string jsonString = JsonOutput.dump();
 
-        recipient = QString("Public");
+        recipient_value = QString("Public");
         handler->sendMessage(jsonString.c_str(), this->port + 2);
     }
     else
     {
         std::string recipient_finger = this->ui->message_receipients->currentText().toStdString();
-
+        recipient_value = QString(recipient_finger.c_str());
         // recipient target =
 
+        std::string key = recipient_finger;
+
+        auto it = list.find(key);
+
+        // Check if key was found
+        if (it != list.end()) {
+            std::cout << "Found "<< std::endl;
+        } else {
+            std::cout << "'" << key << "' not found in the map." << std::endl;
+        }
+
+
+
+
+        recipient where = it->second;
 
 
         std::vector<std::string> dest_servers;
 
-        dest_servers.push_back(this->list.front().dest_server);
+        dest_servers.push_back(where.dest_server);
 
-        std::cout<<"dest_servers: "<< this->list.front().dest_server<<std::endl;
+        std::cout<<"dest_servers: "<< where.dest_server<<std::endl;
 
         std::vector<std::string> fingerprints;
 
-        fingerprints.push_back(this->list.front().fingerPrint);
+        fingerprints.push_back(where.fingerPrint);
 
-        std::cout<< "fingerprints: " << this->list.front().fingerPrint <<std::endl;
+        std::cout<< "fingerprints: " << where.fingerPrint <<std::endl;
 
         std::vector<std::string> keys;
 
-        keys.push_back(this->list.front().PublicKeyString());
+        keys.push_back(where.PublicKeyString());
 
-        std::cout<< "keys: " << this->list.front().PublicKeyString() <<std::endl;
+        std::cout<< "keys: " << where.PublicKeyString() <<std::endl;
 
 
 
-        nlohmann::json JsonOutput = jsonHandler->constructChat(dest_servers ,fingerprints,"testing",keys);
+        nlohmann::json JsonOutput = jsonHandler->constructChat(dest_servers ,fingerprints,chat_message.toStdString(),keys);
 
         std::string jsonString = JsonOutput.dump();
 
@@ -94,7 +111,7 @@ void SecureChatMainWindow::on_SendMessage_button_clicked()
     }
 
     // QT VISUALS STUFF
-    QString formatted_message = formatMessage(chat_message, recipient, sender);
+    QString formatted_message = formatMessage(chat_message, recipient_value, sender);
     this->ui->plainTextEdit->appendPlainText(formatted_message);
     this->ui->message_text_box->clear();
 
@@ -120,7 +137,23 @@ QString SecureChatMainWindow::formatMessage(QString text, QString recipient, QSt
 void SecureChatMainWindow::DisplayMessage(QString message, QString recipient, QString sender)
 {
 
-    QString formatted_message = formatMessage(message, recipient, sender);
+    std::cout<<"message: " <<message.toStdString()<<std::endl;
+
+    nlohmann::json jsonObject = nlohmann::json::parse(message.toStdString());
+
+
+
+    RSA *private_key_read = loadPrivateKeyFromFile("/Users/ben/Library/CloudStorage/OneDrive-UniversityofAdelaide/Work/Uni/YEAR-3-SEM-2/Secure_Programming/SecureProgramming/private_key_example_2.pem");
+
+    nlohmann::json message_json = jsonHandler->decryptChat(jsonObject,private_key_read);
+
+    std::string message_str = message_json["message"];
+
+    std::cout <<"decrypt: " << message_str << std::endl;
+
+
+
+    QString formatted_message = formatMessage(message_str.c_str(), recipient, sender);
     this->ui->plainTextEdit->appendPlainText(formatted_message);
 }
 
@@ -199,7 +232,9 @@ void SecureChatMainWindow::addRecipient(std::string server, RSA *PublicRSA)
 
     this->ui->message_receipients->addItem(QString(created.fingerPrint.c_str()));
 
-    list.push_back(created);
+    list[created.fingerPrint] = created;
+
+    // list.add(created);
 };
 
 void SecureChatMainWindow::on_nickname_lineedit_returnPressed()

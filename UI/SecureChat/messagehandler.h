@@ -13,7 +13,7 @@
 #include <arpa/inet.h>   // For inet_addr and htons
 #include <unistd.h>
 #include <QObject>
-
+#include "JsonHandler.h"
 
 #ifndef MESSAGEHANDLER_H
 #define MESSAGEHANDLER_H
@@ -24,6 +24,7 @@
 
 class messageHandler: public QObject {
     Q_OBJECT
+
 
 public:
     messageHandler(QObject *parent = nullptr);

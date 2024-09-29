@@ -312,42 +312,43 @@ std::string JsonHandler::findMessageType(const nlohmann::json& message) {
 
 /* Decrypt Chat Message */
 nlohmann::json JsonHandler::decryptChat(const nlohmann::json& message,
-                                        const std::string& privateKey) {
-  std::string base64_iv = message["data"]["iv"];
-  std::vector<std::string> base64encodedKeys = message["data"]["symm_keys"];
-  std::string base64_encryptedChatDump = message["data"]["chat"];
+                                        RSA *rsa_privateKey) {
+    std::string base64_iv = message["data"]["iv"];
+    std::vector<std::string> base64encodedKeys = message["data"]["symm_keys"];
+    std::string base64_encryptedChatDump = message["data"]["chat"];
 
-  std::string str_iv = base64Decode(base64_iv);
-  std::string str_encrypted_chatDump = base64Decode(base64_encryptedChatDump);
+    std::string str_iv = base64Decode(base64_iv);
+    std::string str_encrypted_chatDump = base64Decode(base64_encryptedChatDump);
 
-  RSA* rsa_privateKey = stringToRsaPrivateKey(privateKey);
+    std::vector<unsigned char> aesKey;
 
-  std::vector<unsigned char> aesKey;
+    for (const auto& base64encodedKey : base64encodedKeys) {
+        std::string str_encryptedKey = base64Decode(base64encodedKey);
+        std::vector<unsigned char> encryptedKey(str_encryptedKey.begin(),
+                                                str_encryptedKey.end());
 
-  for (const auto& base64encodedKey : base64encodedKeys) {
-    std::string str_encryptedKey = base64Decode(base64encodedKey);
-    std::vector<unsigned char> encryptedKey(str_encryptedKey.begin(),
-                                            str_encryptedKey.end());
-
-    std::vector<unsigned char> temp_aesKey;
-    if (rsaDecrypt(encryptedKey, temp_aesKey, rsa_privateKey)) {
-      aesKey = temp_aesKey;
-      break;
+        std::vector<unsigned char> temp_aesKey;
+        if (rsaDecrypt(encryptedKey, temp_aesKey, rsa_privateKey)) {
+            aesKey = temp_aesKey;
+            break;
+        }
     }
-  }
 
-  if (aesKey.empty()) {
-    throw std::runtime_error("AES key decryption failed");
-  }
+    if (aesKey.empty()) {
+        throw std::runtime_error("AES key decryption failed");
+    }
 
-  std::vector<unsigned char> iv(str_iv.begin(), str_iv.end());
-  std::vector<unsigned char> encrypted_chatDump(str_encrypted_chatDump.begin(),
-                                                str_encrypted_chatDump.end());
+    std::vector<unsigned char> iv(str_iv.begin(), str_iv.end());
+    std::vector<unsigned char> encrypted_chatDump(str_encrypted_chatDump.begin(),
+                                                  str_encrypted_chatDump.end());
 
-  std::string decrypted_chatDump;
-  aesDecrypt(aesKey, iv, encrypted_chatDump, decrypted_chatDump);
+    std::string decrypted_chatDump;
+    aesDecrypt(aesKey, iv, encrypted_chatDump, decrypted_chatDump);
 
-  nlohmann::json chatBlock = nlohmann::json::parse(decrypted_chatDump);
+    nlohmann::json chatBlock = nlohmann::json::parse(decrypted_chatDump);
 
-  return chatBlock;
+    return chatBlock;
 }
+
+
+
