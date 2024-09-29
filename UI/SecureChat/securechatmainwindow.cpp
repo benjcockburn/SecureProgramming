@@ -19,7 +19,7 @@ SecureChatMainWindow::SecureChatMainWindow(QWidget *parent)
     connect(handler, &messageHandler::messageReceived, this, &SecureChatMainWindow::DisplayMessage);
 
     // add fake people!
-    this->addRecipient("192.168.0.239", stringToRsaPublicKey("-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0Htkylt7i1s2ZTkc0RVT\n25l2pR/HxsxBfAXRkUt9djgBMyy7VJo02v2LvirbKkc+5U7SoBpx0F37s2UF4tD5\nvHN8AsC2GHsIAKHpO87ZLi3mAFdoVu0zGhsk3VnEe+YrsdGPC9uuCTzl6JuKS3qB\nHAfhFiQiEZO0ykWeJhI1A97eHoA0Ed3GGUJArZ43hn9enOcU0lWhP/8NxeZSbZdD\n237L8cBijVgSzc23Bc6/ye7+sI+irg9s+TsmW3i/3hZnKrxeQCBQf1ZqLKoTllO8\nxfxzn+Pvk/mqx+vmBzD4mqMWayWtORwb9vNjXMJrd31yWNMd4JmabLtOaA6wK8nu\n6wIDAQAB\n-----END PUBLIC KEY-----\n"));
+    this->addRecipient("192.168.0.239:12346", stringToRsaPublicKey("-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0Htkylt7i1s2ZTkc0RVT\n25l2pR/HxsxBfAXRkUt9djgBMyy7VJo02v2LvirbKkc+5U7SoBpx0F37s2UF4tD5\nvHN8AsC2GHsIAKHpO87ZLi3mAFdoVu0zGhsk3VnEe+YrsdGPC9uuCTzl6JuKS3qB\nHAfhFiQiEZO0ykWeJhI1A97eHoA0Ed3GGUJArZ43hn9enOcU0lWhP/8NxeZSbZdD\n237L8cBijVgSzc23Bc6/ye7+sI+irg9s+TsmW3i/3hZnKrxeQCBQf1ZqLKoTllO8\nxfxzn+Pvk/mqx+vmBzD4mqMWayWtORwb9vNjXMJrd31yWNMd4JmabLtOaA6wK8nu\n6wIDAQAB\n-----END PUBLIC KEY-----\n"));
 
     on_python_tryconnect_clicked();
 
@@ -88,7 +88,7 @@ void SecureChatMainWindow::on_SendMessage_button_clicked()
 
         std::string jsonString = JsonOutput.dump();
 
-        handler->sendMessage(jsonString.c_str(), this->port + 2);
+        handler->sendMessage(jsonString.c_str(), this->port);
 
 
     }
@@ -220,7 +220,7 @@ void SecureChatMainWindow::on_python_tryconnect_clicked()
 
     if(result){
         this->ui->pushButton->setEnabled(true);
-        this->ui->python_tryconnect->setEnabled(false);
+        // this->ui->python_tryconnect->setEnabled(false);
         this->ui->python_status->setText("Python is Running");
     } else {
         this->ui->pushButton->setEnabled(false);
