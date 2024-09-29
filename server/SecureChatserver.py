@@ -162,15 +162,22 @@ class Server:
 
 
     async def start(self):
-        start_server = websockets.serve(self.handler, self.host, self.port)
+        server = await websockets.serve(self.handler, self.host, self.port)
         print(f"Server listening on {self.host}:{self.port}")
+        await server.wait_closed()
 
-        # server.addClient("-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs7PPRzrrm2ZknkfTYEA8\nhD7DKXQDUbMh2cQbdbPn0uwIHbbOWu9emEVAzovTCQQ33ocUuxwHo5EMFphkpjv4\nyRCPNCFHIG7LeXSPKdBwZTL6Vm8OXfRFzb5dpXQCbCwW2yXZsPvZrL/5ZWy1Be5R\nB9SH1OvIdopX1EhLZyGG21UCP51KAg9Y78CPdnHISb5Sruy8XujLs6zRbugXN/yL\nLrbzpeF9wUrhz4h204JfdoS1eJ01q9dvb2ybkf2tHu54yJD5slftt+sNPKx37zD5\nZ7Rh80KkKntJ2e9cgsZ16Gk+8SZJ50fgUjO2ce0tVCkNiuk+T1T7SDV137NbGCB1\nuwIDAQAB\n-----END PUBLIC KEY-----\n")
-        # server.addClient("-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0Htkylt7i1s2ZTkc0RVT\n25l2pR/HxsxBfAXRkUt9djgBMyy7VJo02v2LvirbKkc+5U7SoBpx0F37s2UF4tD5\nvHN8AsC2GHsIAKHpO87ZLi3mAFdoVu0zGhsk3VnEe+YrsdGPC9uuCTzl6JuKS3qB\nHAfhFiQiEZO0ykWeJhI1A97eHoA0Ed3GGUJArZ43hn9enOcU0lWhP/8NxeZSbZdD\n237L8cBijVgSzc23Bc6/ye7+sI+irg9s+TsmW3i/3hZnKrxeQCBQf1ZqLKoTllO8\nxfxzn+Pvk/mqx+vmBzD4mqMWayWtORwb9vNjXMJrd31yWNMd4JmabLtOaA6wK8nu\n6wIDAQAB\n-----END PUBLIC KEY-----\n")
-        # loop = asyncio.get_event_loop()
 
-        # Start both the WebSocket and socket servers concurrently
-        await start_server
+
+    # async def start(self):
+    #     start_server = websockets.serve(self.handler, self.host, self.port)
+    #     print(f"Server listening on {self.host}:{self.port}")
+
+    #     # server.addClient("-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs7PPRzrrm2ZknkfTYEA8\nhD7DKXQDUbMh2cQbdbPn0uwIHbbOWu9emEVAzovTCQQ33ocUuxwHo5EMFphkpjv4\nyRCPNCFHIG7LeXSPKdBwZTL6Vm8OXfRFzb5dpXQCbCwW2yXZsPvZrL/5ZWy1Be5R\nB9SH1OvIdopX1EhLZyGG21UCP51KAg9Y78CPdnHISb5Sruy8XujLs6zRbugXN/yL\nLrbzpeF9wUrhz4h204JfdoS1eJ01q9dvb2ybkf2tHu54yJD5slftt+sNPKx37zD5\nZ7Rh80KkKntJ2e9cgsZ16Gk+8SZJ50fgUjO2ce0tVCkNiuk+T1T7SDV137NbGCB1\nuwIDAQAB\n-----END PUBLIC KEY-----\n")
+    #     # server.addClient("-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0Htkylt7i1s2ZTkc0RVT\n25l2pR/HxsxBfAXRkUt9djgBMyy7VJo02v2LvirbKkc+5U7SoBpx0F37s2UF4tD5\nvHN8AsC2GHsIAKHpO87ZLi3mAFdoVu0zGhsk3VnEe+YrsdGPC9uuCTzl6JuKS3qB\nHAfhFiQiEZO0ykWeJhI1A97eHoA0Ed3GGUJArZ43hn9enOcU0lWhP/8NxeZSbZdD\n237L8cBijVgSzc23Bc6/ye7+sI+irg9s+TsmW3i/3hZnKrxeQCBQf1ZqLKoTllO8\nxfxzn+Pvk/mqx+vmBzD4mqMWayWtORwb9vNjXMJrd31yWNMd4JmabLtOaA6wK8nu\n6wIDAQAB\n-----END PUBLIC KEY-----\n")
+    #     # loop = asyncio.get_event_loop()
+
+    #     # Start both the WebSocket and socket servers concurrently
+    #     await start_server
 
 
 def set_message(chat):
@@ -474,22 +481,18 @@ def operation(type,value=0):
 loop = asyncio.get_event_loop()
 
 
-def OutsideServer_start():
-    global server
-    global loop
-    # server.start()
-    
-    loop.run_until_complete(main())
-    loop.run_forever()
+
+
 
 async def main():
-    global loop
-
-    # Run both the WebSocket and socket servers concurrently
+    loop = asyncio.get_event_loop()
     await asyncio.gather(
-        server.start(),  # Start WebSocket server
-        start_socket_server(loop)  # Start socket server
+        server.start(),
+        start_socket_server(loop)
     )
+    loop.run_forever()
+
+
 
 
 
@@ -501,7 +504,7 @@ if __name__ == "__main__":
 
     thread_send = threading.Thread(target=run,args=(8003,))
     thread_recieve = threading.Thread(target=start_server,args=(8002,))
-    # thread_operations_receive = threading.Thread(target=operations_receive,args=(8000,))
+    # thread_operations_receive = threading.Thread(target=operations_receive,args=(8000,))  replaced with asyncio socket server
     thread_operations_send = threading.Thread(target=operations_send,args=(8001,))
 
     # thread_outside_server = threading.Thread(target=OutsideServer_start)
@@ -511,7 +514,7 @@ if __name__ == "__main__":
     # thread_operations_receive.start()
     thread_operations_send.start()
 
-    OutsideServer_start()
+    asyncio.run(main())
     # server.start()
 
    

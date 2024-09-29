@@ -19,7 +19,7 @@ SecureChatMainWindow::SecureChatMainWindow(QWidget *parent)
     connect(handler, &messageHandler::messageReceived, this, &SecureChatMainWindow::DisplayMessage);
 
     // add fake people!
-    this->addRecipient("192.168.0.239:12346",loadPublicKey("/Users/ben/Library/CloudStorage/OneDrive-UniversityofAdelaide/Work/Uni/YEAR-3-SEM-2/Secure_Programming/SecureProgramming/public_key_example_2.pem") );
+    this->addRecipient("192.168.0.239:12345",loadPublicKey("/Users/ben/Library/CloudStorage/OneDrive-UniversityofAdelaide/Work/Uni/YEAR-3-SEM-2/Secure_Programming/SecureProgramming/public_key_example_2.pem") );
     this->addRecipient("192.168.0.179:12345",loadPublicKey("/Users/ben/Library/CloudStorage/OneDrive-UniversityofAdelaide/Work/Uni/YEAR-3-SEM-2/Secure_Programming/SecureProgramming/public_key_example_1.pem") );
 
 
@@ -56,7 +56,7 @@ void SecureChatMainWindow::on_SendMessage_button_clicked()
         std::string jsonString = JsonOutput.dump();
 
         recipient_value = QString("Public");
-        handler->sendMessage(jsonString.c_str(), this->port + 2);
+        handler->sendMessage(jsonString.c_str(), this->port );
     }
     else
     {
@@ -138,22 +138,42 @@ void SecureChatMainWindow::DisplayMessage(QString message, QString recipient, QS
 {
 
     std::cout<<"message: " <<message.toStdString()<<std::endl;
-
+    std::string message_str;
+    std::string sender_dis;
+        std::string recipient_dis;
     nlohmann::json jsonObject = nlohmann::json::parse(message.toStdString());
 
+    if (jsonObject["data"]["type"] == "chat") {
+        RSA* private_key_read = loadPrivateKeyFromFile("/Users/ben/Library/CloudStorage/OneDrive-UniversityofAdelaide/Work/Uni/YEAR-3-SEM-2/Secure_Programming/SecureProgramming/private_key_example_2.pem");
+
+        if (private_key_read) {
+            nlohmann::json message_json = jsonHandler->decryptChat(jsonObject, private_key_read);
+            message_str = message_json["message"];
+            if (message_json.contains("message")) {
+
+                std::cout << "decrypt: " << message_str << std::endl;
+            } else {
+                std::cerr << "Error: 'message' key not found in decrypted JSON." << std::endl;
+            }
+        } else {
+            std::cerr << "Error: Could not load private key." << std::endl;
+        }
+    } else if (jsonObject["data"]["type"] == "public_chat") {
+        message_str = jsonObject["data"]["message"];
+        sender_dis = jsonObject["data"]["sender"];
+        recipient_dis = "public_chat";
 
 
-    RSA *private_key_read = loadPrivateKeyFromFile("/Users/ben/Library/CloudStorage/OneDrive-UniversityofAdelaide/Work/Uni/YEAR-3-SEM-2/Secure_Programming/SecureProgramming/private_key_example_2.pem");
-
-    nlohmann::json message_json = jsonHandler->decryptChat(jsonObject,private_key_read);
-
-    std::string message_str = message_json["message"];
-
-    std::cout <<"decrypt: " << message_str << std::endl;
+    } else {
+        std::cerr << "Error: Unknown chat type." << std::endl;
+    }
 
 
 
-    QString formatted_message = formatMessage(message_str.c_str(), recipient, sender);
+
+
+
+    QString formatted_message = formatMessage(message_str.c_str(), recipient_dis.c_str(), sender_dis.c_str());
     this->ui->plainTextEdit->appendPlainText(formatted_message);
 }
 
