@@ -1,16 +1,14 @@
 #include "JsonHandler.h"
 
-
-
 JsonHandler::JsonHandler()
     : base64_regex(
           "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$") {}
 
-void JsonHandler::updateCounter(int input){
-  std::cout<< "Counter updated from " << this->counter << " to " << input<<std::endl;
+void JsonHandler::updateCounter(int input) {
+  std::cout << "Counter updated from " << this->counter << " to " << input
+            << std::endl;
   this->counter = input;
 };
-
 
 /* JSON Construction */
 
@@ -39,11 +37,7 @@ nlohmann::json JsonHandler::constructChat(
     const std::vector<std::string>& destinationServers,
     const std::vector<std::string>& participants, const std::string message,
     const std::vector<std::string>& publicKeys) {
-  std::vector<std::string> base64participants;
-  for (const auto& participant : participants) {
-    base64participants.push_back(base64Encode(participant));
-  }
-  nlohmann::json chatBlock = {{"participants", base64participants},
+  nlohmann::json chatBlock = {{"participants", participants},
                               {"message", message}};
   std::string chatDump = chatBlock.dump();
 
@@ -355,12 +349,5 @@ nlohmann::json JsonHandler::decryptChat(const nlohmann::json& message,
 
   nlohmann::json chatBlock = nlohmann::json::parse(decrypted_chatDump);
 
-  std::vector<std::string> base64participants = chatBlock["participants"];
-  std::vector<std::string> participants;
-  for (const auto& base64participant : base64participants) {
-    participants.push_back(base64Decode(base64participant));
-  }
-
-  chatBlock["participants"] = participants;
   return chatBlock;
 }
