@@ -1,10 +1,3 @@
-hello
-
-sudo apt install libssl-dev
-
-run ./run.sh
-
-
 # Network Chat
 
 **Network Chat** is a secure messaging application designed for secure communication between clients. It operates using a **client-server-outside-server-client** model, whilst using the OLAF/Neighbourhood protocol v1.1.3 to ensure proper communication between other implementations.
