@@ -16,9 +16,13 @@ This project is part of the **Secure Programming** course and aims to demonstrat
 
 The application follows a **client-server-outside-server-client** model:
 1. The **Client** sends messages to the **Local Server**.
-2. The **Local Server** forwards messages to an **Outside Server** for secure processing.
+2. The **Local Server** forwards secure messages to an **Outside Server** for relay.
 3. The **Outside Server** relays messages to the **Receiving Local Server**.
-4. The **Receiving Local Server** delivers messages to the destination **Client**.
+4. The **Receiving Local Server** delivers messages to the destination **Outside Server**.
+5. The **Outside Server** delivers messages to the destination **Local Server**.
+5. The **Local Server** delivers messages to the destination **Client**.
+
+Kinda complex, but the **Local Server** and the **Outside Server** are the same python, its passing socket data through to websockets to be processed.
 
 ## Prerequisites
 
