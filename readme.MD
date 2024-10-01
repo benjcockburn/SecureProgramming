@@ -29,58 +29,53 @@ The application follows a **client-server-outside-server-client** model:
 
 ## Prerequisites
 
+### Operating System
+#### Recommended:
+- Linux (ubuntu-20.04)
+- MacOS
+
+#### Will half work:
+- WSL (ports on WSL cannot connect outwards to other servers)
+
 ### Client-Side (Qt Application)
 To run the **Network Chat** client application, you must have **Qt** and its dependencies installed.
 
-#### Installation for Qt:
-1. Install the Qt framework from the [official Qt website](https://www.qt.io/download).
-2. Make sure to include the required modules such as `QtCore`, `QtWidgets`, and any other necessary Qt components for the project.
+#### Installation for Qt & Python3:
 
-### Server-Side (Python Application)
-To run the server application, ensure you have the necessary Python dependencies installed.
-
-#### Installation for Server:
-1. Install Python (3.x) from [python.org](https://www.python.org/downloads/).
-2. Install the required dependencies by running the following command:
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-   Ensure that `requirements.txt` includes all necessary libraries such as `socket`, `cryptography`, and others required for server operations.
+```bash
+sudo apt update
+```
+```bash
+sudo apt install python3-pip libssl-dev cmake qt5-qmake qtbase5-dev
+```
+```bash
+pip install websockets asyncio
+```
 
 ## Usage
 
 ### Running the Client
 
-1. Navigate to the **client directory**.
+1. Navigate to the **client directory** (```<Submission>/UI/SecureChat/```)
 2. Run the client using Qt by executing the following commands:
 
-   ```bash
-   ./NetworkChatClient
-   ```
+```bash
+cmake .
+```
+```bash
+make
+```
+```bash
+./SecureChat
+```
 
 ### Running the Server
 
-1. Navigate to the **server directory**.
+1. Navigate to the **server directory** (```<Submission>/server/```)
 2. Start the server by running:
 
-   ```bash
-   python server.py
-   ```
+```bash
+python3 server.py
+```
 
-3. The server will listen for incoming connections and route messages securely between clients.
-
-## Contribution Guidelines
-
-1. Fork the repository.
-2. Make your changes in a new branch.
-3. Create a pull request for review.
-
-## License
-
-This project is licensed under the MIT License.
-
----
-
-Let me know if you'd like any changes or additional details!
+3. The server will listen for incoming connections and route messages securely between servers as according to protocol.
