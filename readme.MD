@@ -49,9 +49,9 @@ sudo apt install python3-pip libssl-dev cmake qt5-qmake qtbase5-dev
 pip install websockets asyncio
 ```
 
-## Usage
+## Building
 
-### Running the Client
+### Building the Client
 
 1. Navigate to the **client directory** (```<Submission>/UI/SecureChat/```)
 2. Run the client using Qt by executing the following commands:
@@ -62,9 +62,8 @@ cmake .
 ```bash
 make
 ```
-```bash
-./SecureChat
-```
+
+## Usage
 
 ### Running the Server
 
@@ -76,3 +75,56 @@ python3 server.py
 ```
 
 3. The server will listen for incoming connections and route messages securely between servers as according to protocol.
+4. Nothing more needs to be done
+
+### Using the client
+
+First run the client
+
+```bash
+./SecureChat
+```
+
+Now you'll be presented a screen with these options:
+
+### Login Page
+
+- Nickname
+   - Just words
+- Input Box (for your nickname)
+   - Input a nickname if you desire
+   - has no affect on anything except the visual outgoing messages
+- LOAD Key - Push Button
+   - Loads the key from the path supplied below
+   - Advances you to the chat window
+- Retry Connection - Push Button
+   - If the python fails to connect, the client is useless, therefore if it fails to connect you'll be unable to advance
+- Exact path to keys
+   - Just words
+- Input Box (with a directory as a sample input)
+   - Easiest way to do this is to right click the path for your keys folder and select "Copy Path" Alt + Shift + C
+
+
+### Chat Page
+
+- Logged on as: ``<Nickname>``
+- Should have a public key displayed
+- Combobox with other users and public chat option
+- Chat message box
+- send message button
+- ip input box for external servers
+- port input box for external servers
+- tryConnecting, sends the IP and Port to the server and defines it as a part of the neigbour and will send messages to that server
+
+Tutorial
+
+0. If the button to "LOAD Keys" is greyed out, start the python server ``python3 server.py``
+1. Enter in the correct path for the folder of your keys, do not include the "/" on the end,
+   - e.g ``C:\Users\<user>\OneDrive - University of Adelaide\Documents\Workspace\SecureProgramming\UI\SecureChat\Keys``
+2. Press LOAD KEY
+3. Add the IPV4 of the server and its port you want to send to in the two input boxes
+   - the default port for our implementation is 12345
+
+### Known Issues
+- spamming the tryConnecting with different IPs will make it very slow as the calls to send to multiple servers is not asynchronous (yet)
+- 1000 other things
