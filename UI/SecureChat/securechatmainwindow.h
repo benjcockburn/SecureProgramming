@@ -44,6 +44,8 @@ private slots:
 
     void on_python_tryconnect_clicked();
 
+    void on_otheradd_clicked();
+
 private:
     Ui::SecureChatMainWindow *ui;
     messageHandler * handler;

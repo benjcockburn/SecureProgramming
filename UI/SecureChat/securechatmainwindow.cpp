@@ -285,3 +285,17 @@ void SecureChatMainWindow::on_python_tryconnect_clicked()
 
 }
 
+
+void SecureChatMainWindow::on_otheradd_clicked()
+{
+    QString key = this->ui->otherskey->text();
+    QString ip = this->ui->othersip->text();
+
+
+
+    this->addRecipient(ip.toStdString(),stringToRsaPublicKey(key.toStdString()));
+
+
+
+}
+

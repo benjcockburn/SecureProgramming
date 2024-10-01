@@ -94,11 +94,11 @@ Now you'll be presented a screen with these options:
 - Input Box (for your nickname)
    - Input a nickname if you desire
    - has no affect on anything except the visual outgoing messages
+- Retry Connection - Push Button
+   - If the python fails to connect, the client is useless, therefore if it fails to connect you'll be unable to advance
 - LOAD Key - Push Button
    - Loads the key from the path supplied below
    - Advances you to the chat window
-- Retry Connection - Push Button
-   - If the python fails to connect, the client is useless, therefore if it fails to connect you'll be unable to advance
 - Exact path to keys
    - Just words
 - Input Box (with a directory as a sample input)

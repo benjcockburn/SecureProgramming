@@ -181,6 +181,27 @@
              </spacer>
             </item>
             <item>
+             <widget class="QLineEdit" name="otherskey">
+              <property name="placeholderText">
+               <string>-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs7PPRzrrm2ZknkfTYEA8\nhD7DKXQDUbMh2cQbdbPn0uwIHbbOWu9emEVAzovTCQQ33ocUuxwHo5EMFphkpjv4\nyRCPNCFHIG7LeXSPKdBwZTL6Vm8OXfRFzb5dpXQCbCwW2yXZsPvZrL/5ZWy1Be5R\nB9SH1OvIdopX1EhLZyGG21UCP51KAg9Y78CPdnHISb5Sruy8XujLs6zRbugXN/yL\nLrbzpeF9wUrhz4h204JfdoS1eJ01q9dvb2ybkf2tHu54yJD5slftt+sNPKx37zD5\nZ7Rh80KkKntJ2e9cgsZ16Gk+8SZJ50fgUjO2ce0tVCkNiuk+T1T7SDV137NbGCB1\nuwIDAQAB\n-----END PUBLIC KEY-----\n</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="othersip">
+              <property name="placeholderText">
+               <string>192.168.10.228:12345</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="otheradd">
+              <property name="text">
+               <string>add user</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QLineEdit" name="ip_attempt">
               <property name="text">
                <string>192.168.0.239</string>
