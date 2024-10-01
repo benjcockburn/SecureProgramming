@@ -19,8 +19,8 @@ SecureChatMainWindow::SecureChatMainWindow(QWidget *parent)
     connect(handler, &messageHandler::messageReceived, this, &SecureChatMainWindow::DisplayMessage);
 
     // add fake people!
-    this->addRecipient("192.168.0.239:12345",loadPublicKey("/Users/ben/Library/CloudStorage/OneDrive-UniversityofAdelaide/Work/Uni/YEAR-3-SEM-2/Secure_Programming/SecureProgramming/public_key_example_2.pem") );
-    this->addRecipient("192.168.0.179:12345",loadPublicKey("/Users/ben/Library/CloudStorage/OneDrive-UniversityofAdelaide/Work/Uni/YEAR-3-SEM-2/Secure_Programming/SecureProgramming/public_key_example_1.pem") );
+    // this->addRecipient("192.168.0.239:12345",loadPublicKey("/Users/ben/Library/CloudStorage/OneDrive-UniversityofAdelaide/Work/Uni/YEAR-3-SEM-2/Secure_Programming/SecureProgramming/public_key_example_2.pem") );
+    // this->addRecipient("192.168.0.179:12345",loadPublicKey("/Users/ben/Library/CloudStorage/OneDrive-UniversityofAdelaide/Work/Uni/YEAR-3-SEM-2/Secure_Programming/SecureProgramming/public_key_example_1.pem") );
 
 
     on_python_tryconnect_clicked();
