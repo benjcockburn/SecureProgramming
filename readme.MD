@@ -124,6 +124,13 @@ Tutorial
 2. Press LOAD KEY
 3. Add the IPV4 of the server and its port you want to send to in the two input boxes
    - the default port for our implementation is 12345
+4. Send a public chat to test
+5. Input a new user's public key and their ip address with port
+   - address formatted as such ```192.168.0.1:25565```
+   - Public Key as Such in **ONE LINE** ```-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs7PPRzrrm2ZknkfTYEA8\nhD7DKXQDUbMh2cQbdbPn0uwIHbbOWu9emEVAzovTCQQ33ocUuxwHo5EMFphkpjv4\nyRCPNCFHIG7LeXSPKdBwZTL6Vm8OXfRFzb5dpXQCbCwW2yXZsPvZrL/5ZWy1Be5R\nB9SH1OvIdopX1EhLZyGG21UCP51KAg9Y78CPdnHISb5Sruy8XujLs6zRbugXN/yL\nLrbzpeF9wUrhz4h204JfdoS1eJ01q9dvb2ybkf2tHu54yJD5slftt+sNPKx37zD5\nZ7Rh80KkKntJ2e9cgsZ16Gk+8SZJ50fgUjO2ce0tVCkNiuk+T1T7SDV137NbGCB1\nuwIDAQAB\n-----END PUBLIC KEY-----\n``` ONE LINE
+6. Press "add user"
+7. They will appear as an option in the comboBox with their fingerprint, so select the newest one
+8. Send another message!
 
 ### Known Issues
 - spamming the tryConnecting with different IPs will make it very slow as the calls to send to multiple servers is not asynchronous (yet)
