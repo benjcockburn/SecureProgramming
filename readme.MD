@@ -31,7 +31,7 @@ Kinda complex, but the **Local Server** and the **Outside Server** are the same 
 - Linux (ubuntu-20.04)
 - MacOS
 
-#### Will half work:
+#### Will partially work:
 - WSL (ports on WSL cannot connect outwards to other servers)
 
 ### Client-Side (Qt Application)
