@@ -1,3 +1,9 @@
+## Contact
+
+Ben Cockburn a1850196@adelaide.edu.au
+
+Feel free to shoot me an email if you get stuck
+
 # Network Chat
 
 **Network Chat** is a secure messaging application designed for secure communication between clients. It operates using a **client-server-outside-server-client** model, whilst using the OLAF/Neighbourhood protocol v1.1.3 to ensure proper communication between other implementations.
