@@ -38,12 +38,9 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="nickname_lineedit"/>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pushButton">
-            <property name="text">
-             <string>LOAD Key</string>
+           <widget class="QLineEdit" name="nickname_lineedit">
+            <property name="placeholderText">
+             <string>Johnny</string>
             </property>
            </widget>
           </item>
@@ -82,6 +79,13 @@
            </spacer>
           </item>
           <item>
+           <widget class="QPushButton" name="pushButton">
+            <property name="text">
+             <string>LOAD Key</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QLabel" name="label_3">
             <property name="text">
              <string>Exact path to keys</string>
@@ -91,7 +95,7 @@
           <item>
            <widget class="QLineEdit" name="key_path_lineedit">
             <property name="text">
-             <string>/Users/ben/Library/CloudStorage/OneDrive-UniversityofAdelaide/Work/Uni/YEAR-3-SEM-2/Secure_Programming/SecureProgramming/UI/SecureChat/Keys</string>
+             <string>/home/user/SecureProgramming/UI/SecureChat/Keys</string>
             </property>
            </widget>
           </item>
@@ -181,6 +185,13 @@
              </spacer>
             </item>
             <item>
+             <widget class="Line" name="line">
+              <property name="orientation">
+               <enum>Qt::Orientation::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QLineEdit" name="otherskey">
               <property name="placeholderText">
                <string>-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs7PPRzrrm2ZknkfTYEA8\nhD7DKXQDUbMh2cQbdbPn0uwIHbbOWu9emEVAzovTCQQ33ocUuxwHo5EMFphkpjv4\nyRCPNCFHIG7LeXSPKdBwZTL6Vm8OXfRFzb5dpXQCbCwW2yXZsPvZrL/5ZWy1Be5R\nB9SH1OvIdopX1EhLZyGG21UCP51KAg9Y78CPdnHISb5Sruy8XujLs6zRbugXN/yL\nLrbzpeF9wUrhz4h204JfdoS1eJ01q9dvb2ybkf2tHu54yJD5slftt+sNPKx37zD5\nZ7Rh80KkKntJ2e9cgsZ16Gk+8SZJ50fgUjO2ce0tVCkNiuk+T1T7SDV137NbGCB1\nuwIDAQAB\n-----END PUBLIC KEY-----\n</string>
@@ -198,6 +209,13 @@
              <widget class="QPushButton" name="otheradd">
               <property name="text">
                <string>add user</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="Line" name="line_2">
+              <property name="orientation">
+               <enum>Qt::Orientation::Horizontal</enum>
               </property>
              </widget>
             </item>
