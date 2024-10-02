@@ -2,6 +2,10 @@
 
 **Network Chat** is a secure messaging application designed for secure communication between clients. It operates using a **client-server-outside-server-client** model, whilst using the OLAF/Neighbourhood protocol v1.1.3 to ensure proper communication between other implementations.
 
+### Warning
+
+This project has vulnerabilities that lead to instablity in the code, please try and break it :)
+
 ## Project Overview
 
 This project is part of the **Secure Programming** course and aims to demonstrate secure programming practices in network-based communications. The software includes a **client-side application** built using **Qt** written in cpp and a **server-side application** that uses local sockets and websockets that is written in **Python**.
