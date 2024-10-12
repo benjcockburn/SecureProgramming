@@ -241,13 +241,31 @@ void SecureChatMainWindow::on_try_attempt_clicked()
     std::string portStr = port.toStdString();
     std::string ipStr = ip.toStdString();
 
-    // Correct JSON structure
-    nlohmann::json JsonOutput = {
-        {"data", {{"type", "connect"}, {"ip", ipStr}, {"port", portStr}}}};
 
-    std::string jsonString = JsonOutput.dump();
 
-    handler->sendMessage(jsonString.c_str(), this->port);
+    // Get the current text from the serverList
+    QString currentText = this->ui->serverList->toPlainText();
+
+    // Create the new entry (ip:port)
+    QString newEntry = ip + ":" + port;
+
+    // Split the current text into individual lines
+    QStringList lines = currentText.split("\n", Qt::SkipEmptyParts);
+
+    // Check if the new entry already exists
+    if (!lines.contains(newEntry)) {
+        // If not, append it
+        this->ui->serverList->appendPlainText(newEntry);
+        // Correct JSON structure
+        nlohmann::json JsonOutput = {
+                                     {"data", {{"type", "connect"}, {"ip", ipStr}, {"port", portStr}}}};
+
+        std::string jsonString = JsonOutput.dump();
+
+        handler->sendMessage(jsonString.c_str(), this->port);
+    } else {
+        std::cout<<"ALREADY TRIED TO CONNECT TO THAT"<<std::endl;
+    }
 }
 
 void SecureChatMainWindow::addRecipient(std::string server, RSA *PublicRSA)

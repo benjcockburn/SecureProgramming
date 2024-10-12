@@ -31,21 +31,22 @@ async def send_public(ip, port, message):
         await neighbour.send(json.dumps(message))
     except Exception as e:
         print(f"Failed to send private chat to {ip}:{port}: {e}")
-        
+
 
 async def relay_private(message):
-
+    global neighbour_servers
     list_of_recievers = message['data']['destination_servers']
 
     for each in list_of_recievers:
         if each not in neighbour_servers:
-            await addneighbour(each)
             print(f"adding: {each}")
+            addneighbour(each)
 
 async def addneighbour(destination):
     global neighbour_servers
+    print(f"desst: {destination}")
     neighbour_servers.append(destination)
-    print(neighbour_servers)
+    print(f"All servers: {neighbour_servers}")
 
 async def echo(websocket, path):
     async for message in websocket:
@@ -86,7 +87,13 @@ async def handle_client(reader, writer):
             print("client pinging server")
             
         if(message['data']['type']=='connect'):
-            await addneighbour(message['data']['ip']+":"+message['data']['port'])
+            manual = message['data']['ip']+":"+message['data']['port']
+
+            
+            if manual not in neighbour_servers:
+                print(f"adding: {manual}")
+                await addneighbour(manual)
+            # await addneighbour(message['data']['ip']+":"+message['data']['port'])
 
 
 

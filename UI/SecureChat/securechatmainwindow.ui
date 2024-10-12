@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="login_tab">
        <attribute name="title">
@@ -221,6 +221,13 @@
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_4">
             <item>
+             <widget class="QLabel" name="label_3">
+              <property name="text">
+               <string>Messages:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QPlainTextEdit" name="plainTextEdit">
               <property name="enabled">
                <bool>true</bool>
@@ -260,7 +267,20 @@
              </spacer>
             </item>
             <item>
+             <widget class="QLabel" name="label_2">
+              <property name="text">
+               <string>Server List: (your own entries)</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QScrollArea" name="scrollArea">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="widgetResizable">
                <bool>true</bool>
               </property>
@@ -270,12 +290,22 @@
                  <x>0</x>
                  <y>0</y>
                  <width>355</width>
-                 <height>196</height>
+                 <height>24</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_8">
                 <item>
-                 <widget class="QPlainTextEdit" name="plainTextEdit_2"/>
+                 <widget class="QPlainTextEdit" name="serverList">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Ignored">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </widget>
