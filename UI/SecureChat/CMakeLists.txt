@@ -49,6 +49,8 @@ set(PROJECT_SOURCES
         controller.h
         recipient.h
         recipient.cpp
+        RSA_generate_Keys.h
+        RSA_generate_Keys.cpp
 
 )
 

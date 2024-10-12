@@ -11,24 +11,27 @@ connected_servers = set()  # Track connected servers
 client_list = []
 
 async def relay_public(message):
-
-
-
     print(f"Forwarded to: {neighbour_servers}")
-
+    
+    tasks = []
     for server in neighbour_servers:
         ip, port = server.split(':')
-        # Convert the port to an integer if needed
-        port = int(port)
-        try:
-            print(f"sending message to {server}")
-            uri = f"ws://{ip}:{port}" #todo: make this handle more then one server
-            neighbour = await websockets.connect(uri)
-            
+        port = int(port)  # Convert the port to an integer if needed
+        # Create an async task for each send operation and store it in the tasks list
+        tasks.append(asyncio.create_task(send_public(ip, port, message)))
 
-            await neighbour.send(json.dumps(message))
-        except Exception as e:
-            print(f"Failed to send private chat to {server}: {e}")
+    # Optionally, you can await the completion of all tasks (if you want to handle them)
+    await asyncio.gather(*tasks)
+
+async def send_public(ip, port, message):
+    try:
+        print(f"sending message to {ip}:{port}")
+        uri = f"ws://{ip}:{port}"
+        neighbour = await websockets.connect(uri)
+        await neighbour.send(json.dumps(message))
+    except Exception as e:
+        print(f"Failed to send private chat to {ip}:{port}: {e}")
+        
 
 async def relay_private(message):
 
@@ -77,6 +80,7 @@ async def handle_client(reader, writer):
         if(message['data']['type']=='hello'):
             print("client says hello")
             await addClient(message['data']['public_key'])
+            # relay to known servers
             
         elif(message['data']['type']=='awwake'or message['data']['type']=='ping'):
             print("client pinging server")

@@ -1,4 +1,5 @@
 #include "securechatmainwindow.h"
+#include "RSA_generate_Keys.h"
 
 #include "./ui_securechatmainwindow.h"
 
@@ -12,21 +13,33 @@ SecureChatMainWindow::SecureChatMainWindow(QWidget *parent)
     this->ui->tabWidget->setTabEnabled(2, false);
     handler = new messageHandler(this);
 
+    bool outcome = handler->start();
+    std::cout << outcome << std::endl;
+
+
     jsonHandler = new JsonHandler();
 
-    this->controller = new controller_sp(jsonHandler, this->port);
+    
 
+    this->controller = new controller_sp(jsonHandler, this->port);
+bool anotherOutcome = controller->start();
     connect(handler, &messageHandler::messageReceived, this, &SecureChatMainWindow::DisplayMessage);
 
     // add fake people!
     // this->addRecipient("192.168.0.239:12345",loadPublicKey("/Users/ben/Library/CloudStorage/OneDrive-UniversityofAdelaide/Work/Uni/YEAR-3-SEM-2/Secure_Programming/SecureProgramming/public_key_example_2.pem") );
     // this->addRecipient("192.168.0.179:12345",loadPublicKey("/Users/ben/Library/CloudStorage/OneDrive-UniversityofAdelaide/Work/Uni/YEAR-3-SEM-2/Secure_Programming/SecureProgramming/public_key_example_1.pem") );
 
-
     on_python_tryconnect_clicked();
 
-
-    
+    if (!outcome || !anotherOutcome)
+    {
+        this->ui->tabWidget->setTabEnabled(2, true);
+        this->ui->tabWidget->setTabEnabled(0, false);
+        // this->close();
+        this->ui->errorLabel->setText("PORTS FAILED TO BIND, PLEASE CLOSE THE OTHER INSTANCE OF THIS APPLICATION\n\nTo run multiple clients you need a seperate computer, sorry fixing this would've taken weeks\n\nTip: best connection is between a mac-linux or linux-linux or mac-mac, as WSL doesnt easily allow for ports to communicate both ways");
+        std::cout << "Trying to quit"<<std::endl;
+        return;
+    }
 }
 
 SecureChatMainWindow::~SecureChatMainWindow()
@@ -56,7 +69,7 @@ void SecureChatMainWindow::on_SendMessage_button_clicked()
         std::string jsonString = JsonOutput.dump();
 
         recipient_value = QString("Public");
-        handler->sendMessage(jsonString.c_str(), this->port );
+        handler->sendMessage(jsonString.c_str(), this->port);
     }
     else
     {
@@ -69,45 +82,40 @@ void SecureChatMainWindow::on_SendMessage_button_clicked()
         auto it = list.find(key);
 
         // Check if key was found
-        if (it != list.end()) {
-            std::cout << "Found "<< std::endl;
-        } else {
+        if (it != list.end())
+        {
+            std::cout << "Found " << std::endl;
+        }
+        else
+        {
             std::cout << "'" << key << "' not found in the map." << std::endl;
         }
 
-
-
-
         recipient where = it->second;
-
 
         std::vector<std::string> dest_servers;
 
         dest_servers.push_back(where.dest_server);
 
-        std::cout<<"dest_servers: "<< where.dest_server<<std::endl;
+        std::cout << "dest_servers: " << where.dest_server << std::endl;
 
         std::vector<std::string> fingerprints;
 
         fingerprints.push_back(where.fingerPrint);
 
-        std::cout<< "fingerprints: " << where.fingerPrint <<std::endl;
+        std::cout << "fingerprints: " << where.fingerPrint << std::endl;
 
         std::vector<std::string> keys;
 
         keys.push_back(where.PublicKeyString());
 
-        std::cout<< "keys: " << where.PublicKeyString() <<std::endl;
+        std::cout << "keys: " << where.PublicKeyString() << std::endl;
 
-
-
-        nlohmann::json JsonOutput = jsonHandler->constructChat(dest_servers ,fingerprints,chat_message.toStdString(),keys);
+        nlohmann::json JsonOutput = jsonHandler->constructChat(dest_servers, fingerprints, chat_message.toStdString(), keys);
 
         std::string jsonString = JsonOutput.dump();
 
         handler->sendMessage(jsonString.c_str(), this->port);
-
-
     }
 
     // QT VISUALS STUFF
@@ -137,41 +145,45 @@ QString SecureChatMainWindow::formatMessage(QString text, QString recipient, QSt
 void SecureChatMainWindow::DisplayMessage(QString message, QString recipient, QString sender)
 {
 
-    std::cout<<"message: " <<message.toStdString()<<std::endl;
+    std::cout << "message: " << message.toStdString() << std::endl;
     std::string message_str;
     std::string sender_dis;
-        std::string recipient_dis;
+    std::string recipient_dis;
     nlohmann::json jsonObject = nlohmann::json::parse(message.toStdString());
 
-    if (jsonObject["data"]["type"] == "chat") {
-        RSA* private_key_read = loadPrivateKeyFromFile("/Users/ben/Library/CloudStorage/OneDrive-UniversityofAdelaide/Work/Uni/YEAR-3-SEM-2/Secure_Programming/SecureProgramming/private_key_example_2.pem");
+    if (jsonObject["data"]["type"] == "chat")
+    {
+        RSA *private_key_read = loadPrivateKeyFromFile("/Users/ben/Library/CloudStorage/OneDrive-UniversityofAdelaide/Work/Uni/YEAR-3-SEM-2/Secure_Programming/SecureProgramming/private_key_example_2.pem");
 
-        if (private_key_read) {
+        if (private_key_read)
+        {
             nlohmann::json message_json = jsonHandler->decryptChat(jsonObject, private_key_read);
             message_str = message_json["message"];
-            if (message_json.contains("message")) {
+            if (message_json.contains("message"))
+            {
 
                 std::cout << "decrypt: " << message_str << std::endl;
-            } else {
+            }
+            else
+            {
                 std::cerr << "Error: 'message' key not found in decrypted JSON." << std::endl;
             }
-        } else {
+        }
+        else
+        {
             std::cerr << "Error: Could not load private key." << std::endl;
         }
-    } else if (jsonObject["data"]["type"] == "public_chat") {
+    }
+    else if (jsonObject["data"]["type"] == "public_chat")
+    {
         message_str = jsonObject["data"]["message"];
         sender_dis = jsonObject["data"]["sender"];
         recipient_dis = "public_chat";
-
-
-    } else {
+    }
+    else
+    {
         std::cerr << "Error: Unknown chat type." << std::endl;
     }
-
-
-
-
-
 
     QString formatted_message = formatMessage(message_str.c_str(), recipient_dis.c_str(), sender_dis.c_str());
     this->ui->plainTextEdit->appendPlainText(formatted_message);
@@ -183,23 +195,16 @@ void SecureChatMainWindow::on_pushButton_clicked()
 
     // TODO: make sure python is on before allowing the button to be pressed
 
-    QString path = this->ui->key_path_lineedit->text();
-
-    std::cout << path.toStdString() << "/public_key.pem" << std::endl;
-
-    RSA *public_key_read = loadPublicKey(path.toStdString() + "/public_key.pem");
+    RSA *private_key_read = generate_private_key();
 
     // private key
-
-    RSA *private_key_read = loadPrivateKeyFromFile(path.toStdString() + "/private_key.pem");
-
-    std::cout << path.toStdString() << "/private_key.pem" << std::endl;
+    RSA *public_key_read = generate_public_key(private_key_read);
 
     // set nickname
     QString nickname = this->ui->nickname_lineedit->text();
     if (nickname == "")
     {
-        nickname = QString("N/A"); // enter the key here;
+        nickname = QString("YOU"); // enter the key here;
     }
 
     // TODO: if any of these fail it should prevent them continuing
@@ -266,36 +271,33 @@ void SecureChatMainWindow::on_python_tryconnect_clicked()
 {
 
     nlohmann::json JsonOutput = {
-                                               {"data", {{"type", "awwake"}, }}};
+        {"data", {
+                     {"type", "awwake"},
+                 }}};
 
     std::string jsonString = JsonOutput.dump();
 
     bool result = handler->sendMessage(jsonString.c_str(), this->port);
-    std::cout<<"result: "<< result <<std::endl;
+    std::cout << "result: " << result << std::endl;
 
-    if(result){
+    if (result)
+    {
         this->ui->pushButton->setEnabled(true);
         // this->ui->python_tryconnect->setEnabled(false);
         this->ui->python_status->setText("Python is Running");
-    } else {
+    }
+    else
+    {
         this->ui->pushButton->setEnabled(false);
         this->ui->python_tryconnect->setEnabled(true);
-         this->ui->python_status->setText("Python is NOT RUNNING, NO LOAD KEY");
+        this->ui->python_status->setText("Python is NOT RUNNING, NO LOAD KEY");
     }
-
 }
-
 
 void SecureChatMainWindow::on_otheradd_clicked()
 {
     QString key = this->ui->otherskey->text();
     QString ip = this->ui->othersip->text();
 
-
-
-    this->addRecipient(ip.toStdString(),stringToRsaPublicKey(key.toStdString()));
-
-
-
+    this->addRecipient(ip.toStdString(), stringToRsaPublicKey(key.toStdString()));
 }
-

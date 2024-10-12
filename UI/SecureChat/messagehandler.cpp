@@ -46,7 +46,7 @@ messageHandler::messageHandler(QObject *parent)
     // std::string uri = "ws://localhost:8765";  // WebSocket server URL
 
     // ws_client.run(uri);
-    this->start();
+    
 }
 
 
@@ -80,7 +80,7 @@ messageHandler:: ~messageHandler(){
 };
 
 
-void messageHandler::start(){
+bool messageHandler::start(){
     // start sending server
     this->thread_receiving=true;
     std::thread serverThread(&messageHandler::server, this);
@@ -90,6 +90,9 @@ void messageHandler::start(){
     serverThread.detach();
     // start receiving server
 
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    return this->result == -1;
 }
 
 int messageHandler::server() {
@@ -105,6 +108,7 @@ int messageHandler::server() {
             int server_fd = socket(AF_INET, SOCK_STREAM, 0);
             if (server_fd == -1) {
                 std::cerr << "Socket creation failed" << std::endl;
+                this->result = 5;
                 return 1;
             }
 
@@ -116,12 +120,14 @@ int messageHandler::server() {
             if (bind(server_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) == -1) {
                 std::cerr << "Bind failed" << std::endl;
                 close(server_fd);
+                this->result = 6;
                 return 1;
             }
 
             if (listen(server_fd, 5) == -1) {
                 std::cerr << "Listen failed" << std::endl;
                 close(server_fd);
+                this->result = 7;
                 return 1;
             }
 

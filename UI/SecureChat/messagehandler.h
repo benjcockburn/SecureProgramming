@@ -33,7 +33,7 @@ public:
     volatile bool thread_receiving=false;
     volatile bool thread_sending= false;
 
-    void start();
+    bool start();
 
 
     int server();
@@ -44,7 +44,8 @@ public:
 signals:
     void messageReceived(QString message, QString recipient, QString sender);
 
-
+private:
+    int result = -1;
 };
 
 #endif // MESSAGEHANDLER_H

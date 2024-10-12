@@ -20,12 +20,18 @@ public:
 
     JsonHandler * jsonHandler;
 
-        void start();
+        bool start();
         int port;
         volatile bool thread_receiving_controller = false;
         int server();
 
+        
+
+
         ~controller_sp();
+
+        private:
+            int result = -1;
 };
 
 #endif // CONTROLLER_H

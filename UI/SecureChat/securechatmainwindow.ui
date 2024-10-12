@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="login_tab">
        <attribute name="title">
@@ -66,6 +66,13 @@
            </layout>
           </item>
           <item>
+           <widget class="QPushButton" name="pushButton">
+            <property name="text">
+             <string>Enter the Chatroom</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <spacer name="verticalSpacer">
             <property name="orientation">
              <enum>Qt::Orientation::Vertical</enum>
@@ -77,27 +84,6 @@
              </size>
             </property>
            </spacer>
-          </item>
-          <item>
-           <widget class="QPushButton" name="pushButton">
-            <property name="text">
-             <string>LOAD Key</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>Exact path to keys</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLineEdit" name="key_path_lineedit">
-            <property name="text">
-             <string>/home/user/SecureProgramming/UI/SecureChat/Keys</string>
-            </property>
-           </widget>
           </item>
          </layout>
         </item>
@@ -145,16 +131,6 @@
                 <item>
                  <property name="text">
                   <string>PUBLIC (to all users online)</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>John (test)</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>David (test)</string>
                  </property>
                 </item>
                </widget>
@@ -283,6 +259,28 @@
               </property>
              </spacer>
             </item>
+            <item>
+             <widget class="QScrollArea" name="scrollArea">
+              <property name="widgetResizable">
+               <bool>true</bool>
+              </property>
+              <widget class="QWidget" name="scrollAreaWidgetContents">
+               <property name="geometry">
+                <rect>
+                 <x>0</x>
+                 <y>0</y>
+                 <width>355</width>
+                 <height>196</height>
+                </rect>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_8">
+                <item>
+                 <widget class="QPlainTextEdit" name="plainTextEdit_2"/>
+                </item>
+               </layout>
+              </widget>
+             </widget>
+            </item>
            </layout>
           </item>
          </layout>
@@ -291,8 +289,21 @@
       </widget>
       <widget class="QWidget" name="nicknames_tab">
        <attribute name="title">
-        <string>Nicknames</string>
+        <string>ERROR</string>
        </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_9">
+          <item>
+           <widget class="QLabel" name="errorLabel">
+            <property name="text">
+             <string>ERROR:</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>

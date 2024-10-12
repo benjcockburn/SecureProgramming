@@ -4,7 +4,7 @@ controller_sp::controller_sp(JsonHandler *jsonInput,int port)
 {
     this->jsonHandler = jsonInput;
     this->port = port;
-    this->start();
+
 };
 
 controller_sp::~controller_sp()
@@ -14,7 +14,7 @@ controller_sp::~controller_sp()
 
 // handle counter updates and client updates in this from the python
 
-void controller_sp::start()
+bool controller_sp::start()
 {
     // start sending server
     this->thread_receiving_controller = true;
@@ -23,6 +23,9 @@ void controller_sp::start()
     // Detach the thread so it runs independently
     serverThread_controller.detach();
     // start receiving server
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+    return this->result == -1;
 }
 
 int controller_sp::server()
@@ -38,6 +41,7 @@ int controller_sp::server()
         if (server_fd == -1)
         {
             std::cerr << "Socket creation failed" << std::endl;
+            this->result = 5;
             return 1;
         }
 
@@ -49,7 +53,9 @@ int controller_sp::server()
         if (bind(server_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) == -1)
         {
             std::cerr << "Bind failed" << std::endl;
+
             close(server_fd);
+            this->result = 6;
             return 1;
         }
 
@@ -57,6 +63,7 @@ int controller_sp::server()
         {
             std::cerr << "Listen failed" << std::endl;
             close(server_fd);
+            this->result = 7;
             return 1;
         }
 
