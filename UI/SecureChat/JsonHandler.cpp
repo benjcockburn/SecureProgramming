@@ -233,7 +233,7 @@ bool JsonHandler::validateMessage(const nlohmann::json& message,
       }
 
       // verify signature
-      if (!(verifySignature(message))) {
+      if (!(verifySignature(message, rsa_publicKey))) {
         std::cerr << "Signature does not match data section." << std::endl;
         return false;
       }

@@ -34,7 +34,7 @@ private:
     const std::regex base64_regex;
     bool is_base64(const std::string &str);
 
-    bool verifySignature(const nlohmann::json &message);
+    bool verifySignature(const nlohmann::json &message, RSA* rsa_publicKey);
 
     std::string hash(const std::string& data);
     std::string signData(const std::string& data, RSA* rsa_privateKey);
@@ -60,7 +60,7 @@ public:
     nlohmann::json constructServerHello(const std::string &serverIP, RSA* rsa_privateKey);              // in python
 
     // JSON Validation
-    bool validateMessage(const nlohmann::json &message);
+    bool validateMessage(const nlohmann::json &message, RSA* rsa_publicKey);
 
     // Determine Message Type
     std::string findMessageType(const nlohmann::json &message);
