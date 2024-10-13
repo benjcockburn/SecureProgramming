@@ -22,7 +22,7 @@ std::string JsonHandler::hash(const std::string& data) {
 
 std::string JsonHandler::signData(const std::string& data,
                                   std::string privateKey) {
-  RSA* rsa_privateKey = stringToRsaPublicKey(privateKey);
+  RSA* rsa_privateKey = stringToRsaPrivateKey(privateKey);
 
   std::string hashedData = hash(data);
 
