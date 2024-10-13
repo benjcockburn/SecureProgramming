@@ -187,8 +187,8 @@ bool JsonHandler::verifySignature(const nlohmann::json& message,
   if (RSA_verify(NID_sha256,
                  reinterpret_cast<const unsigned char*>(hashedData.c_str()),
                  hashedData.size(),
-                 reinterpret_cast<const unsigned char*>(signature.c_str()),
-                 signature.size(), rsa_publicKey) != 1) {
+                 reinterpret_cast<const unsigned char*>(decodedSignature.c_str()),
+                 decodedSignature.size(), rsa_publicKey) != 1) {
     std::cerr << "Signature verification failed: "
               << ERR_error_string(ERR_get_error(), nullptr) << std::endl;
     return false;
