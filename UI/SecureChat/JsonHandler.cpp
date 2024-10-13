@@ -10,14 +10,45 @@ void JsonHandler::updateCounter(int input) {
   this->counter = input;
 };
 
+std::string JsonHandler::hash(const std::string& data) {
+  unsigned char hash[SHA256_DIGEST_LENGTH];
+  SHA256_CTX sha256;
+  SHA256_Init(&sha256);
+  SHA256_Update(&sha256, data.c_str(), data.size());
+  SHA256_Final(hash, &sha256);
+
+  return std::string(reinterpret_cast<char*>(hash), SHA256_DIGEST_LENGTH);
+}
+
+std::string JsonHandler::signData(const std::string& data,
+                                  RSA* rsa_privateKey) {
+  std::string hashedData = sha256(data);
+
+  unsigned char signature[256];
+  unsigned int len = 0;
+
+  if (RSA_sign(NID_sha256,
+               reinterpret_cast<const unsigned char*>(hashedData.c_str()),
+               hashedData.size(), signature, &len, rsa_privateKey) != 1) {
+    std::cerr << "Error signing data: "
+              << ERR_error_string(ERR_get_error(), nullptr) << std::endl;
+    return "";
+  }
+
+  return base64Encode(std::string(reinterpret_cast<char*>(signature), len));
+}
+
 /* JSON Construction */
 
 // Construct Signed Data
-nlohmann::json JsonHandler::constructSignedData(nlohmann::json data) {
+nlohmann::json JsonHandler::constructSignedData(nlohmann::json data,
+                                                RSA* rsa_privateKey) {
   int currentCounter = ++counter;
+
   std::string dataStr = data.dump();
-  std::string signature =
-      base64Encode((dataStr + std::to_string(currentCounter)));
+  std::string signature_basis = dataStr + std::to_string(currentCounter);
+
+  std::string signature = signData(signature_basis, rsa_privateKey);
 
   return nlohmann::json{{"type", "signed_data"},
                         {"data", data},
@@ -26,17 +57,18 @@ nlohmann::json JsonHandler::constructSignedData(nlohmann::json data) {
 }
 
 // Construct Hello
-nlohmann::json JsonHandler::constructHello(const std::string& publicKey) {
+nlohmann::json JsonHandler::constructHello(const std::string& publicKey,
+                                           RSA* rsa_privateKey) {
   nlohmann::json helloData = {{"type", "hello"}, {"public_key", publicKey}};
 
-  return constructSignedData(helloData);
+  return constructSignedData(helloData, rsa_privateKey);
 }
 
 // Construct Chat
 nlohmann::json JsonHandler::constructChat(
     const std::vector<std::string>& destinationServers,
     const std::vector<std::string>& participants, const std::string message,
-    const std::vector<std::string>& publicKeys) {
+    const std::vector<std::string>& publicKeys, RSA* rsa_privateKey) {
   nlohmann::json chatBlock = {{"participants", participants},
                               {"message", message}};
   std::string chatDump = chatBlock.dump();
@@ -67,17 +99,18 @@ nlohmann::json JsonHandler::constructChat(
                              {"symm_keys", base64encodedKeys},
                              {"chat", base64Encode(str_encrypted_chatDump)}};
 
-  return constructSignedData(chatData);
+  return constructSignedData(chatData, rsa_privateKey);
 }
 
 // Construct Public Chat
 nlohmann::json JsonHandler::constructPublicChat(
-    const std::string& senderFingerprint, const std::string& message) {
+    const std::string& senderFingerprint, const std::string& message,
+    RSA* rsa_privateKey) {
   nlohmann::json publicChatData = {{"type", "public_chat"},
                                    {"sender", base64Encode(senderFingerprint)},
                                    {"message", message}};
 
-  return constructSignedData(publicChatData);
+  return constructSignedData(publicChatData, rsa_privateKey);
 }
 
 // Construct Client List Request
@@ -116,11 +149,12 @@ nlohmann::json JsonHandler::constructClientUpdateRequest() {
 }
 
 // Construct Server Hello
-nlohmann::json JsonHandler::constructServerHello(const std::string& serverIP) {
+nlohmann::json JsonHandler::constructServerHello(const std::string& serverIP,
+                                                 RSA* rsa_privateKey) {
   nlohmann::json serverHelloData = {{"type", "server_hello"},
                                     {"sender", serverIP}};
 
-  return constructSignedData(serverHelloData);
+  return constructSignedData(serverHelloData, rsa_privateKey);
 }
 
 /* JSON Validation */
@@ -128,7 +162,8 @@ bool JsonHandler::is_base64(const std::string& str) {
   return std::regex_match(str, base64_regex);
 }
 
-bool JsonHandler::verifySignature(const nlohmann::json& message) {
+bool JsonHandler::verifySignature(const nlohmann::json& message,
+                                  RSA* rsa_publicKey) {
   std::string type = message["type"];
   if (type != "signed_data") {
     std::cerr << "Wrong message type, expected 'signed_data'" << std::endl;
@@ -140,13 +175,26 @@ bool JsonHandler::verifySignature(const nlohmann::json& message) {
 
   std::string signature = message["signature"];
 
-  std::string recreated_signature =
-      base64Encode((dataStr + std::to_string(message_counter)));
+  std::string signature_basis = dataStr + std::to_string(currentCounter);
 
-  return recreated_signature == signature;
+  std::string hashedData = hash(signature_basis);
+  std::string decodedSignature = base64Decode(signature);
+
+  if (RSA_verify(NID_sha256,
+                 reinterpret_cast<const unsigned char*>(hashedData.c_str()),
+                 hashedData.size(),
+                 reinterpret_cast<const unsigned char*>(signature.c_str()),
+                 signature.size(), rsa_publicKey) != 1) {
+    std::cerr << "Signature verification failed: "
+              << ERR_error_string(ERR_get_error(), nullptr) << std::endl;
+    return false;
+  }
+
+  return true;
 }
 
-bool JsonHandler::validateMessage(const nlohmann::json& message) {
+bool JsonHandler::validateMessage(const nlohmann::json& message,
+                                  RSA* rsa_publicKey) {
   try {
     if (!message.contains("type")) {
       std::cerr << "Missing 'Type' field." << std::endl;
@@ -312,43 +360,40 @@ std::string JsonHandler::findMessageType(const nlohmann::json& message) {
 
 /* Decrypt Chat Message */
 nlohmann::json JsonHandler::decryptChat(const nlohmann::json& message,
-                                        RSA *rsa_privateKey) {
-    std::string base64_iv = message["data"]["iv"];
-    std::vector<std::string> base64encodedKeys = message["data"]["symm_keys"];
-    std::string base64_encryptedChatDump = message["data"]["chat"];
+                                        RSA* rsa_privateKey) {
+  std::string base64_iv = message["data"]["iv"];
+  std::vector<std::string> base64encodedKeys = message["data"]["symm_keys"];
+  std::string base64_encryptedChatDump = message["data"]["chat"];
 
-    std::string str_iv = base64Decode(base64_iv);
-    std::string str_encrypted_chatDump = base64Decode(base64_encryptedChatDump);
+  std::string str_iv = base64Decode(base64_iv);
+  std::string str_encrypted_chatDump = base64Decode(base64_encryptedChatDump);
 
-    std::vector<unsigned char> aesKey;
+  std::vector<unsigned char> aesKey;
 
-    for (const auto& base64encodedKey : base64encodedKeys) {
-        std::string str_encryptedKey = base64Decode(base64encodedKey);
-        std::vector<unsigned char> encryptedKey(str_encryptedKey.begin(),
-                                                str_encryptedKey.end());
+  for (const auto& base64encodedKey : base64encodedKeys) {
+    std::string str_encryptedKey = base64Decode(base64encodedKey);
+    std::vector<unsigned char> encryptedKey(str_encryptedKey.begin(),
+                                            str_encryptedKey.end());
 
-        std::vector<unsigned char> temp_aesKey;
-        if (rsaDecrypt(encryptedKey, temp_aesKey, rsa_privateKey)) {
-            aesKey = temp_aesKey;
-            break;
-        }
+    std::vector<unsigned char> temp_aesKey;
+    if (rsaDecrypt(encryptedKey, temp_aesKey, rsa_privateKey)) {
+      aesKey = temp_aesKey;
+      break;
     }
+  }
 
-    if (aesKey.empty()) {
-        throw std::runtime_error("AES key decryption failed");
-    }
+  if (aesKey.empty()) {
+    throw std::runtime_error("AES key decryption failed");
+  }
 
-    std::vector<unsigned char> iv(str_iv.begin(), str_iv.end());
-    std::vector<unsigned char> encrypted_chatDump(str_encrypted_chatDump.begin(),
-                                                  str_encrypted_chatDump.end());
+  std::vector<unsigned char> iv(str_iv.begin(), str_iv.end());
+  std::vector<unsigned char> encrypted_chatDump(str_encrypted_chatDump.begin(),
+                                                str_encrypted_chatDump.end());
 
-    std::string decrypted_chatDump;
-    aesDecrypt(aesKey, iv, encrypted_chatDump, decrypted_chatDump);
+  std::string decrypted_chatDump;
+  aesDecrypt(aesKey, iv, encrypted_chatDump, decrypted_chatDump);
 
-    nlohmann::json chatBlock = nlohmann::json::parse(decrypted_chatDump);
+  nlohmann::json chatBlock = nlohmann::json::parse(decrypted_chatDump);
 
-    return chatBlock;
+  return chatBlock;
 }
-
-
-
