@@ -21,8 +21,10 @@ std::string JsonHandler::hash(const std::string& data) {
 }
 
 std::string JsonHandler::signData(const std::string& data,
-                                  RSA* rsa_privateKey) {
-  std::string hashedData = sha256(data);
+                                  std::string privateKey) {
+  RSA* rsa_privateKey = stringToRsaPublicKey(privateKey);
+
+  std::string hashedData = hash(data);
 
   unsigned char signature[256];
   unsigned int len = 0;
@@ -42,13 +44,13 @@ std::string JsonHandler::signData(const std::string& data,
 
 // Construct Signed Data
 nlohmann::json JsonHandler::constructSignedData(nlohmann::json data,
-                                                RSA* rsa_privateKey) {
+                                                std::string privateKey) {
   int currentCounter = ++counter;
 
   std::string dataStr = data.dump();
   std::string signature_basis = dataStr + std::to_string(currentCounter);
 
-  std::string signature = signData(signature_basis, rsa_privateKey);
+  std::string signature = signData(signature_basis, privateKey);
 
   return nlohmann::json{{"type", "signed_data"},
                         {"data", data},
@@ -58,17 +60,17 @@ nlohmann::json JsonHandler::constructSignedData(nlohmann::json data,
 
 // Construct Hello
 nlohmann::json JsonHandler::constructHello(const std::string& publicKey,
-                                           RSA* rsa_privateKey) {
+                                           std::string privateKey) {
   nlohmann::json helloData = {{"type", "hello"}, {"public_key", publicKey}};
 
-  return constructSignedData(helloData, rsa_privateKey);
+  return constructSignedData(helloData, privateKey);
 }
 
 // Construct Chat
 nlohmann::json JsonHandler::constructChat(
     const std::vector<std::string>& destinationServers,
     const std::vector<std::string>& participants, const std::string message,
-    const std::vector<std::string>& publicKeys, RSA* rsa_privateKey) {
+    const std::vector<std::string>& publicKeys, std::string privateKey) {
   nlohmann::json chatBlock = {{"participants", participants},
                               {"message", message}};
   std::string chatDump = chatBlock.dump();
@@ -99,18 +101,18 @@ nlohmann::json JsonHandler::constructChat(
                              {"symm_keys", base64encodedKeys},
                              {"chat", base64Encode(str_encrypted_chatDump)}};
 
-  return constructSignedData(chatData, rsa_privateKey);
+  return constructSignedData(chatData, privateKey);
 }
 
 // Construct Public Chat
 nlohmann::json JsonHandler::constructPublicChat(
     const std::string& senderFingerprint, const std::string& message,
-    RSA* rsa_privateKey) {
+    std::string privateKey) {
   nlohmann::json publicChatData = {{"type", "public_chat"},
                                    {"sender", base64Encode(senderFingerprint)},
                                    {"message", message}};
 
-  return constructSignedData(publicChatData, rsa_privateKey);
+  return constructSignedData(publicChatData, privateKey);
 }
 
 // Construct Client List Request
@@ -150,11 +152,11 @@ nlohmann::json JsonHandler::constructClientUpdateRequest() {
 
 // Construct Server Hello
 nlohmann::json JsonHandler::constructServerHello(const std::string& serverIP,
-                                                 RSA* rsa_privateKey) {
+                                                 std::string privateKey) {
   nlohmann::json serverHelloData = {{"type", "server_hello"},
                                     {"sender", serverIP}};
 
-  return constructSignedData(serverHelloData, rsa_privateKey);
+  return constructSignedData(serverHelloData, privateKey);
 }
 
 /* JSON Validation */
@@ -163,7 +165,9 @@ bool JsonHandler::is_base64(const std::string& str) {
 }
 
 bool JsonHandler::verifySignature(const nlohmann::json& message,
-                                  RSA* rsa_publicKey) {
+                                  std::string publicKey) {
+  RSA* rsa_publicKey = stringToRsaPublicKey(publicKey);
+
   std::string type = message["type"];
   if (type != "signed_data") {
     std::cerr << "Wrong message type, expected 'signed_data'" << std::endl;
@@ -175,7 +179,7 @@ bool JsonHandler::verifySignature(const nlohmann::json& message,
 
   std::string signature = message["signature"];
 
-  std::string signature_basis = dataStr + std::to_string(currentCounter);
+  std::string signature_basis = dataStr + std::to_string(message_counter);
 
   std::string hashedData = hash(signature_basis);
   std::string decodedSignature = base64Decode(signature);
@@ -194,7 +198,7 @@ bool JsonHandler::verifySignature(const nlohmann::json& message,
 }
 
 bool JsonHandler::validateMessage(const nlohmann::json& message,
-                                  RSA* rsa_publicKey) {
+                                  std::string publicKey) {
   try {
     if (!message.contains("type")) {
       std::cerr << "Missing 'Type' field." << std::endl;
@@ -233,7 +237,7 @@ bool JsonHandler::validateMessage(const nlohmann::json& message,
       }
 
       // verify signature
-      if (!(verifySignature(message, rsa_publicKey))) {
+      if (!(verifySignature(message, publicKey))) {
         std::cerr << "Signature does not match data section." << std::endl;
         return false;
       }
