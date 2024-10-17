@@ -1,3 +1,5 @@
+//Bailey Atkinson (a1772413), Ben Cockburn (a1850196), Marcus Beckwith (a1852054)
+
 #ifndef RSA_KEYGEN_H
 #define RSA_KEYGEN_H
 
