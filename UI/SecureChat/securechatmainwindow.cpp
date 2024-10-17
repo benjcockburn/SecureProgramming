@@ -146,6 +146,11 @@ void SecureChatMainWindow::DisplayMessage(QString message, QString recipient, QS
 {
 
     std::cout << "message: " << message.toStdString() << std::endl;
+
+    if(jsonHandler->validateMessage(message.toStdString())){
+        return;
+    }
+
     std::string message_str;
     std::string sender_dis;
     std::string recipient_dis;
@@ -153,7 +158,9 @@ void SecureChatMainWindow::DisplayMessage(QString message, QString recipient, QS
 
     if (jsonObject["data"]["type"] == "chat")
     {
-        RSA *private_key_read = loadPrivateKeyFromFile("/Users/ben/Library/CloudStorage/OneDrive-UniversityofAdelaide/Work/Uni/YEAR-3-SEM-2/Secure_Programming/SecureProgramming/private_key_example_2.pem");
+        RSA *private_key_read = this->myself->PrivateKey;
+
+        //loadPrivateKeyFromFile("/Users/ben/Library/CloudStorage/OneDrive-UniversityofAdelaide/Work/Uni/YEAR-3-SEM-2/Secure_Programming/SecureProgramming/private_key_example_2.pem");
 
         if (private_key_read)
         {
@@ -168,6 +175,8 @@ void SecureChatMainWindow::DisplayMessage(QString message, QString recipient, QS
             {
                 std::cerr << "Error: 'message' key not found in decrypted JSON." << std::endl;
             }
+            sender_dis = jsonObject["data"]["iv"];
+            recipient_dis = myself->name.toStdString();
         }
         else
         {
@@ -199,6 +208,8 @@ void SecureChatMainWindow::on_pushButton_clicked()
 
     // private key
     RSA *public_key_read = generate_public_key(private_key_read);
+
+    std::cout<<rsaPublicKeyToString(public_key_read)<<std::endl;
 
     // set nickname
     QString nickname = this->ui->nickname_lineedit->text();

@@ -161,6 +161,20 @@
              </spacer>
             </item>
             <item>
+             <widget class="QLineEdit" name="lineEdit">
+              <property name="placeholderText">
+               <string>/home/usr/documents/file.pdf</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_2">
+              <property name="text">
+               <string>Upload File (copy the path)</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="Line" name="line">
               <property name="orientation">
                <enum>Qt::Orientation::Horizontal</enum>
@@ -290,7 +304,7 @@
                  <x>0</x>
                  <y>0</y>
                  <width>355</width>
-                 <height>24</height>
+                 <height>72</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_8">
