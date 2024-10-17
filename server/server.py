@@ -1,9 +1,7 @@
 import asyncio
 import websockets
 import socket
-import threading
 import json
-import time
 counter = 0
 
 neighbour_servers = []  # List of connected neighbour servers

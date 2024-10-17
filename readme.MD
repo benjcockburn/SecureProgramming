@@ -1,8 +1,8 @@
-## Contact
+## AUTHORS
 
-Ben Cockburn a1850196@adelaide.edu.au
-
-Feel free to shoot me an email if you get stuck
+Bailey Atkinson (a1772413)
+Ben Cockburn (a1850196)
+Marcus Beckwith (a1852054)
 
 # Network Chat
 
