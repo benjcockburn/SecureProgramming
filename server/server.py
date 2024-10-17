@@ -34,11 +34,17 @@ async def send_public(ip, port, message):
 async def relay_private(message):
     global neighbour_servers
     list_of_recievers = message['data']['destination_servers']
-
+    
     for each in list_of_recievers:
+        print("..\n\neach\n\n"+each)
+        ipea, portea = each.split(':')
         if each not in neighbour_servers:
             print(f"adding: {each}")
-            addneighbour(each)
+            await addneighbour(each)
+        
+        await send_public(ipea,portea,message)
+        
+        # send_pbulic()
 
 async def addneighbour(destination):
     global neighbour_servers
