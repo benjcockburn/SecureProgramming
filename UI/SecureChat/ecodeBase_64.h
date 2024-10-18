@@ -1,4 +1,4 @@
-
+//Bailey Atkinson (a1772413), Ben Cockburn (a1850196), Marcus Beckwith (a1852054)
 #ifndef base64_SP
 #define base64_SP
 

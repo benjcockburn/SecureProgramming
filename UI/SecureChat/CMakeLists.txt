@@ -1,3 +1,4 @@
+#Bailey Atkinson (a1772413), Ben Cockburn (a1850196), Marcus Beckwith (a1852054)
 cmake_minimum_required(VERSION 3.16)
 
 project(SecureChat VERSION 0.1 LANGUAGES CXX)
