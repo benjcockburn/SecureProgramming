@@ -61,6 +61,13 @@ pip install websockets asyncio
 
 ## Building
 
+### Building the client for **MAC**
+
+1. Download QT Creator from the internet {https://www.qt.io/download-qt-installer}
+2. Open the ```CMakeLists.txt``` as a project file
+3. Build for release
+4. Hit the play button in the bottom left
+
 ### Building the Client
 
 1. Navigate to the **client directory** (```<Submission>/UI/SecureChat/```)
@@ -106,14 +113,8 @@ Now you'll be presented a screen with these options:
    - has no affect on anything except the visual outgoing messages
 - Retry Connection - Push Button
    - If the python fails to connect, the client is useless, therefore if it fails to connect you'll be unable to advance
-- LOAD Key - Push Button
-   - Loads the key from the path supplied below
-   - Advances you to the chat window
-- Exact path to keys
-   - Just words
-- Input Box (with a directory as a sample input)
-   - Easiest way to do this is to right click the path for your keys folder and select "Copy Path" Alt + Shift + C
-
+- Enter the chat room - Push Button
+   - Allows the user to enter the chat room and prints their public key to the console, for sharing between clients
 
 ### Chat Page
 
@@ -122,6 +123,8 @@ Now you'll be presented a screen with these options:
 - Combobox with other users and public chat option
 - Chat message box
 - send message button
+- File path button
+- Upload file button
 - ip input box for external servers
 - port input box for external servers
 - tryConnecting, sends the IP and Port to the server and defines it as a part of the neigbour and will send messages to that server
@@ -129,19 +132,14 @@ Now you'll be presented a screen with these options:
 Tutorial
 
 0. If the button to "LOAD Keys" is greyed out, start the python server ``python3 server.py``
-1. Enter in the correct path for the folder of your keys, do not include the "/" on the end,
-   - e.g ``C:\Users\<user>\OneDrive - University of Adelaide\Documents\Workspace\SecureProgramming\UI\SecureChat\Keys``
-2. Press LOAD KEY
+1. Enter a nickname
+2. Press Enter Chat ROom
 3. Add the IPV4 of the server and its port you want to send to in the two input boxes
    - the default port for our implementation is 12345
 4. Send a public chat to test
 5. Input a new user's public key and their ip address with port
    - address formatted as such ```192.168.0.1:25565```
-   - Public Key as Such in **ONE LINE** ```-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs7PPRzrrm2ZknkfTYEA8\nhD7DKXQDUbMh2cQbdbPn0uwIHbbOWu9emEVAzovTCQQ33ocUuxwHo5EMFphkpjv4\nyRCPNCFHIG7LeXSPKdBwZTL6Vm8OXfRFzb5dpXQCbCwW2yXZsPvZrL/5ZWy1Be5R\nB9SH1OvIdopX1EhLZyGG21UCP51KAg9Y78CPdnHISb5Sruy8XujLs6zRbugXN/yL\nLrbzpeF9wUrhz4h204JfdoS1eJ01q9dvb2ybkf2tHu54yJD5slftt+sNPKx37zD5\nZ7Rh80KkKntJ2e9cgsZ16Gk+8SZJ50fgUjO2ce0tVCkNiuk+T1T7SDV137NbGCB1\nuwIDAQAB\n-----END PUBLIC KEY-----\n``` ONE LINE
+   - Public Key as Such in **ONE LINE** ```-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs7PPRzrrm2ZknkfTYEA8\nhD7DKXQDUbMh2cQbdbPn0uwIHbbOWu9emEVAzovTCQQ33ocUuxwHo5EMFphkpjv4\nyRCPNCFHIG7LeXSPKdBwZTL6Vm8OXfRFzb5dpXQCbCwW2yXZsPvZrL/5ZWy1Be5R\nB9SH1OvIdopX1EhLZyGG21UCP51KAg9Y78CPdnHISb5Sruy8XujLs6zRbugXN/yL\nLrbzpeF9wUrhz4h204JfdoS1eJ01q9dvb2ybkf2tHu54yJD5slftt+sNPKx37zD5\nZ7Rh80KkKntJ2e9cgsZ16Gk+8SZJ50fgUjO2ce0tVCkNiuk+T1T7SDV137NbGCB1\nuwIDAQAB\n-----END PUBLIC KEY-----\n``` **ONE LINE**
 6. Press "add user"
 7. They will appear as an option in the comboBox with their fingerprint, so select the newest one
-8. Send another message!
-
-### Known Issues
-- spamming the tryConnecting with different IPs will make it very slow as the calls to send to multiple servers is not asynchronous (yet)
-- 1000 other things
+8. Send another message, this one will be encrypted!
