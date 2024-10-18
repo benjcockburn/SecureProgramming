@@ -147,7 +147,7 @@ void SecureChatMainWindow::DisplayMessage(QString message, QString recipient, QS
 
     std::cout << "message: " << message.toStdString() << std::endl;
 
-    if(jsonHandler->validateMessage(message.toStdString())){
+    if(!jsonHandler->validateMessage(message.toStdString())){
         return;
     }
 
